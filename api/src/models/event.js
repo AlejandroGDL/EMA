@@ -1,0 +1,181 @@
+const mongoose = require('mongoose');
+
+const EventSchema = new mongoose.Schema({
+  Title: {
+    type: String,
+    required: true,
+  },
+  DateandHour: {
+    type: Date,
+    required: true,
+  },
+  Duration: {
+    type: Number,
+    required: true,
+  },
+  Place: {
+    type: String,
+    required: true,
+  },
+  Image: {
+    type: Buffer,
+    contentType: String,
+  },
+  EndDateHour: {
+    type: Date,
+    required: true,
+  },
+});
+
+class EventRepo {
+  // Crear un evento
+  static async create({ Title, DateandHour, Duration, Place, Image }) {
+    //Validaciones
+    Validations(Title, DateandHour, Duration, Place);
+
+    //Evitar solapamiento de eventos
+    await isOverlappingEvent(DateandHour, Duration);
+
+    //Crear el evento
+    const Event = await EventModel.create({
+      Title,
+      DateandHour: new Date(DateandHour),
+      Duration,
+      Place,
+      Image: Image.buffer,
+      contentType: Image.mimetype,
+      EndDateHour,
+    });
+
+    return Event;
+  }
+  // Buscar un evento
+  static async findOne({ EventID }) {
+    const EventModel = mongoose.model('Event', EventSchema);
+
+    //Buscar el evento por ID
+    const event = await EventModel.findOne({ _id: EventID });
+
+    return event;
+  }
+  // Buscar todos los eventos
+  static async find() {
+    const EventModel = mongoose.model('Event', EventSchema);
+
+    //Buscar todos los eventos
+    const events = await EventModel.find();
+
+    return events;
+  }
+  // Eliminar un evento
+  static async delete({ EventID }) {
+    const EventModel = mongoose.model('Event', EventSchema);
+
+    //Eliminar el evento por ID
+    const event = await EventModel.deleteOne({ _id: EventID });
+
+    return event;
+  }
+  // Actualizar un evento
+  static async update({ EventID, Title, DateandHour, Duration, Place, Image }) {
+    const EventModel = mongoose.model('Event', EventSchema);
+
+    // Validar que el evento existe
+    eventExistence(EventID);
+
+    // Validaciones
+    Validations(Title, DateandHour, Duration, Place);
+
+    // Validar que no se solapen eventos
+    isOverlappingEvent(DateandHour, Duration);
+
+    //Actualizar el evento
+    const updateData = {
+      Title,
+      DateandHour: new Date(DateandHour),
+      Duration,
+      Place,
+      EndDateHour,
+    };
+
+    if (Image) {
+      updateData.Image = Image.buffer;
+      updateData.contentType = Image.mimetype;
+    }
+
+    let updatedEvent;
+    try {
+    } catch (error) {
+      console.error('Error updating event:', error);
+      throw new Error('Error updating event');
+    }
+
+    return updatedEvent;
+  }
+}
+
+// Solapamiento de eventos
+async function isOverlappingEvent(DateandHour, Duration) {
+  const EventModel = mongoose.model('Event', EventSchema);
+
+  // Convertir la cadena a tipo date
+  const DateHour = new Date(DateandHour);
+  // Convertir la duración a milisegundos
+  const DurationMilliseconds = Duration * 60 * 1000;
+  // Calcular la hora de finalización del evento
+  const EndDateHour = new Date(DateHour.getTime() + DurationMilliseconds);
+
+  // Validar que no se solapen eventos
+  const isOverlapping = await EventModel.findOne({
+    $or: [
+      {
+        DateandHour: { $lt: EndDateHour },
+        EndDateHour: { $gt: DateHour },
+      },
+    ],
+  });
+
+  if (isOverlapping) {
+    console.error('El evento se solapa con otro evento existente');
+    throw new Error('El evento se solapa con otro evento existente');
+  }
+}
+
+// Validar que el evento existe
+async function eventExistence(EventID) {
+  const EventModel = mongoose.model('Event', EventSchema);
+
+  //Buscar el evento por ID
+  const event = await EventModel.findOne({ _id: EventID });
+  //Validar que el evento existe
+  if (!event) {
+    console.error('El evento no existe');
+    throw new Error('El evento no existe');
+  }
+}
+
+// Validaciones
+function Validations(Title, DateandHour, Duration, Place) {
+  //Validar que todos los campos estén presentes
+  if (!Title || !DateandHour || !Duration || !Place) {
+    console.error('Todos los campos son requeridos');
+    throw new Error('Todos los campos son requeridos');
+  }
+  // Validar que la duración no sea negativa
+  if (Duration <= 0) {
+    console.error('La duración no puede ser negativa');
+    throw new Error('La duración no puede ser negativa');
+  }
+  // Validar que la fecha no sea anterior a la actual
+  if (new Date(DateandHour) < new Date()) {
+    console.error('La fecha no puede ser anterior a la actual');
+    throw new Error('La fecha no puede ser anterior a la actual');
+  }
+  // Validar que el título y el lugar sean strings
+  if (typeof Title !== 'string' || typeof Place !== 'string') {
+    console.error('El título, el lugar deben ser strings');
+    throw new Error('El título, el lugar deben ser strings');
+  }
+}
+
+module.exports = EventRepo;

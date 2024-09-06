@@ -20,5 +20,7 @@ router.put(
 );
 //Eliminar eventos
 router.delete('/event/:EventID', eventController.deleteEvent);
+//Registrar asistencia a un evento
+router.post('/registerevent/:StudentID', eventController.registerattendance);
 
 module.exports = router;

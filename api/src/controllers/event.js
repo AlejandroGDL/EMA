@@ -41,6 +41,7 @@ const getEvents = async (req, res) => {
   }
 };
 
+//Controlador para actualizar un evento
 const updateEvent = async (req, res) => {
   const { EventID } = req.params;
   const { Title, DateandHour, Duration, Place } = req.body;
@@ -80,4 +81,23 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-module.exports = { getEvent, createEvent, getEvents, updateEvent, deleteEvent };
+//Controlador para obtener el evento activo
+const registerattendance = async (req, res) => {
+  const { StudentID } = req.params;
+
+  try {
+    const activeEvent = await EventRepo.register({ StudentID });
+    res.json(activeEvent);
+  } catch (error) {
+    res.json('Error al registrarte al evento', error.message);
+  }
+};
+
+module.exports = {
+  getEvent,
+  createEvent,
+  getEvents,
+  updateEvent,
+  deleteEvent,
+  registerattendance,
+};

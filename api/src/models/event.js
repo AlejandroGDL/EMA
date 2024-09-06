@@ -25,6 +25,14 @@ const EventSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  IsActive: {
+    type: Boolean,
+    default: false,
+  },
+  Assistance: {
+    type: [Number],
+    ref: 'User',
+  },
 });
 
 class EventRepo {
@@ -73,6 +81,9 @@ class EventRepo {
   static async delete({ EventID }) {
     const EventModel = mongoose.model('Event', EventSchema);
 
+    // Validar que el evento existe
+    eventExistence(EventID);
+
     //Eliminar el evento por ID
     const event = await EventModel.deleteOne({ _id: EventID });
 
@@ -107,6 +118,31 @@ class EventRepo {
     );
 
     return updateEvent;
+  }
+  // Registrar asistencia a un evento
+  static async register({ StudentID }) {
+    const EventModel = mongoose.model('Event', EventSchema);
+
+    //Buscar el evento activo
+    const event = await EventModel.findOne({ IsActive: true });
+
+    //Validar que el evento existe
+    if (!event) {
+      console.error('No hay eventos activos');
+      throw new Error('No hay eventos activos');
+    }
+
+    //Ingresa el ID del estudiante al evento
+    event.Assistance.push(StudentID);
+
+    //Actualizar el evento
+    const RegisterEvent = await EventModel.findByIdAndUpdate(
+      { _id: event._id },
+      { Assistance: event.Assistance },
+      { new: true }
+    );
+
+    return RegisterEvent;
   }
 }
 

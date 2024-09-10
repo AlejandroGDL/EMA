@@ -31,7 +31,7 @@ const EventSchema = new mongoose.Schema({
   },
   Assistance: {
     type: [Number],
-    ref: 'User',
+    default: [],
   },
 });
 
@@ -92,7 +92,6 @@ class EventRepo {
   // Actualizar un evento
   static async update({ EventID, Title, DateandHour, Duration, Place, Image }) {
     const EventModel = mongoose.model('Event', EventSchema);
-
     // Validar que el evento existe
     eventExistence(EventID);
 
@@ -121,28 +120,30 @@ class EventRepo {
   }
   // Registrar asistencia a un evento
   static async register({ StudentID }) {
-    const EventModel = mongoose.model('Event', EventSchema);
-
     //Buscar el evento activo
-    const event = await EventModel.findOne({ IsActive: true });
+    const activeEvent = await findActive();
 
-    //Validar que el evento existe
-    if (!event) {
+    if (!activeEvent) {
       console.error('No hay eventos activos');
       throw new Error('No hay eventos activos');
     }
 
-    //Ingresa el ID del estudiante al evento
-    event.Assistance.push(StudentID);
+    //Validar que el estudiante no haya asistido previamente
+    if (activeEvent.Assistance.includes(StudentID)) {
+      console.error('El estudiante ya ha asistido a este evento');
+      throw new Error('El estudiante ya ha asistido a este evento');
+    }
 
-    //Actualizar el evento
-    const RegisterEvent = await EventModel.findByIdAndUpdate(
-      { _id: event._id },
-      { Assistance: event.Assistance },
-      { new: true }
-    );
+    //const updateUser = await UserRepo.register({
+    //  StudentID,
+    //  EventID: activeEvent._id,
+    //});
 
-    return RegisterEvent;
+    //Registrar asistencia
+    activeEvent.Assistance.push(StudentID);
+    await activeEvent.save();
+
+    return activeEvent;
   }
 }
 
@@ -186,6 +187,16 @@ async function eventExistence(EventID) {
     console.error('El evento no existe');
     throw new Error('El evento no existe');
   }
+}
+
+// Buscar el evento activo
+async function findActive() {
+  const EventModel = mongoose.model('Event', EventSchema);
+
+  //Buscar el evento activo
+  const event = await EventModel.findOne({ IsActive: true });
+
+  return event;
 }
 
 // Validaciones

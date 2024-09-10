@@ -26,9 +26,9 @@ const UserSchema = new mongoose.Schema({
     type: Object,
     required: true,
   },
-  AssitedEvents: {
+  AssistedEvents: {
     type: [Number],
-    required: true,
+    default: [],
   },
 });
 
@@ -144,6 +144,56 @@ class UserRepo {
       StudentInfo: User.StudentInfo,
       AssitedEvents: User.AssitedEvents,
     };
+  }
+
+  static async update({
+    StudentID,
+    StudentName,
+    StudentLastName,
+    StudentPassword,
+    StudentImage,
+    StudentInfo,
+  }) {
+    Validation.StudentID(StudentID);
+    const UserModel = mongoose.model('User', UserSchema);
+
+    const User =
+      StudentPassword &&
+      (await bcrypt.hash(StudentPassword, 1)).then((hashedPassword) => {
+        return UserModel.findByIdAndUpdate(
+          { StudentID },
+          {
+            StudentName,
+            StudentLastName,
+            StudentPassword: hashedPassword,
+            StudentImage,
+            StudentInfo,
+          },
+          { new: true }
+        );
+      });
+
+    return User;
+  }
+
+  // Eliminar un usuario
+  static async delete({ StudentID }) {
+    Validation.StudentID(StudentID);
+    const UserModel = mongoose.model('User', UserSchema);
+
+    const User = await UserModel.deleteOne({ StudentID });
+    return User;
+  }
+
+  // Registrar asistencia a un evento
+  static async register({ StudentID, EventID }) {
+    Validation.StudentID(StudentID);
+    const UserModel = mongoose.model('User', UserSchema);
+
+    UserModel.AssistedEvents.push(EventID);
+    const updatedUser = await UserModel.save();
+
+    return updatedUser;
   }
 }
 

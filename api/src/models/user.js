@@ -26,13 +26,19 @@ const UserSchema = new mongoose.Schema({
     type: Object,
     required: true,
   },
-  AssistedEvents: {
-    type: [Number],
-    default: [],
-  },
+  AssistedEvents: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Event',
+    },
+  ],
 });
 
+const User = mongoose.model('User', UserSchema);
+module.exports.user = User;
+
 class UserRepo {
+  // Crear un usuario
   static async create({
     StudentName,
     StudentLastName,
@@ -40,19 +46,31 @@ class UserRepo {
     StudentPassword,
     StudentImage,
     StudentInfo,
-    AssitedEvents,
+    AssistedEvents,
   }) {
-    if (
-      !StudentName ||
-      !StudentLastName ||
-      !StudentID ||
-      !StudentPassword ||
-      !StudentImage ||
-      !StudentInfo ||
-      !AssitedEvents
-    ) {
-      console.error('Todos los campos son requeridos');
-      throw new Error('Todos los campos son requeridos');
+    if (!StudentName) {
+      console.error('El nombre es requerido');
+      throw new Error('El nombre es requerido');
+    }
+    if (!StudentLastName) {
+      console.error('El apellido es requerido');
+      throw new Error('El apellido es requerido');
+    }
+    if (!StudentID) {
+      console.error('El ID es requerido');
+      throw new Error('El ID es requerido');
+    }
+    if (!StudentPassword) {
+      console.error('La contraseña es requerida');
+      throw new Error('La contraseña es requerida');
+    }
+    if (!StudentImage) {
+      console.error('La imagen es requerida');
+      throw new Error('La imagen es requerida');
+    }
+    if (!StudentInfo) {
+      console.error('La información es requerida');
+      throw new Error('La información es requerida');
     }
     if (StudentPassword.length < 8) {
       console.error('La contraseña debe tener al menos 8 caracteres');
@@ -65,10 +83,6 @@ class UserRepo {
     if (typeof StudentInfo !== 'object') {
       console.error('El campo de información debe ser un objeto');
       throw new Error('El campo de información debe ser un objeto');
-    }
-    if (!Array.isArray(AssitedEvents)) {
-      console.error('Los eventos asistidos deben ser un arreglo');
-      throw new Error('Los eventos asistidos deben ser un arreglo');
     }
     if (
       typeof StudentName !== 'string' ||
@@ -95,12 +109,12 @@ class UserRepo {
       StudentPassword: hashedPassword,
       StudentImage,
       StudentInfo,
-      AssitedEvents,
+      AssistedEvents,
     });
 
     return User;
   }
-
+  // Encontrar un usuario por su StudentID
   static async findOne({ StudentID }) {
     const UserModel = mongoose.model('User', UserSchema);
 
@@ -118,7 +132,7 @@ class UserRepo {
       throw new Error(error.message);
     }
   }
-
+  // Metodo login
   static async login({ StudentID, StudentPassword }) {
     Validation.StudentID(StudentID);
     Validation.StudentPassword(StudentPassword);
@@ -142,10 +156,10 @@ class UserRepo {
       StudentID: User.StudentID,
       StudentImage: User.StudentImage,
       StudentInfo: User.StudentInfo,
-      AssitedEvents: User.AssitedEvents,
+      AssistedEvents: User.AssistedEvents,
     };
   }
-
+  //Actualizar un usuario
   static async update({
     StudentID,
     StudentName,
@@ -175,7 +189,6 @@ class UserRepo {
 
     return User;
   }
-
   // Eliminar un usuario
   static async delete({ StudentID }) {
     Validation.StudentID(StudentID);
@@ -185,15 +198,14 @@ class UserRepo {
     return User;
   }
 
-  // Registrar asistencia a un evento
-  static async register({ StudentID, EventID }) {
-    Validation.StudentID(StudentID);
+  // Obtener usuario y eventos asistidos
+  static async getAssistedEvents({ StudentID }) {
     const UserModel = mongoose.model('User', UserSchema);
 
-    UserModel.AssistedEvents.push(EventID);
-    const updatedUser = await UserModel.save();
-
-    return updatedUser;
+    const User = await UserModel.findOne({ StudentID }).populate(
+      'AssistedEvents'
+    );
+    return User;
   }
 }
 

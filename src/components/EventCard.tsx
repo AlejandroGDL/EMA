@@ -1,13 +1,12 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import React from 'react';
 
 import Theme from '../styles/Theme';
 
+//Componentes
 import MyText from './MyText';
 import MyButton from './MyButton';
 import Separator from './Separator';
-
-import EventList from '../EventList';
 
 //Iconos
 import Date from '../icons/Date';
@@ -15,8 +14,31 @@ import Clock from '../icons/Clock';
 import Duration from '../icons/Duration';
 import Place from '../icons/Place';
 
+//Axios
+import axios from 'axios';
+
 const EventCard = () => {
-  return EventList.map((event, id) => (
+  const [Eventos, setEventos] = React.useState([]);
+
+  const getEvents = async () => {
+    try {
+      const Eventos = await axios.get(
+        'https://mz15q3zq-3000.usw3.devtunnels.ms/api/events'
+      );
+      setEventos(Eventos.data);
+      console.log('Eventoooooooooss:', Eventos.data[0]);
+    } catch (error) {
+      console.error('Error during get-events:', {
+        response: error,
+      });
+    }
+  };
+
+  React.useEffect(() => {
+    getEvents();
+  }, []);
+
+  return Eventos.map((event, id) => (
     <View
       style={styles.ConEventCard}
       key={id}

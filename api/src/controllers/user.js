@@ -1,3 +1,4 @@
+const { get } = require('mongoose');
 const UserRepo = require('../models/user');
 
 //Controlador para crear un usuario
@@ -59,4 +60,16 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { createUser, getUser, loginUser };
+//Controlado para obtener los eventos asistidos por un usuario
+const getAssistedEvents = async (req, res) => {
+  const { StudentID } = req.params;
+
+  try {
+    const user = await UserRepo.getAssistedEvents({ StudentID });
+    res.json(user);
+  } catch (error) {
+    res.json('Error al encontrar el estudiante', error.message);
+  }
+};
+
+module.exports = { createUser, getUser, loginUser, getAssistedEvents };

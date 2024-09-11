@@ -8,5 +8,7 @@ router.get('/user/:StudentID', userController.getUser);
 router.post('/user', userController.createUser);
 //Login
 router.post('/login', userController.loginUser);
+//Eventos asistidos
+router.get('/user/events/:StudentID', userController.getAssistedEvents);
 
 module.exports = router;

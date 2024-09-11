@@ -7,6 +7,7 @@ import Theme from '../src/styles/Theme';
 //Componentes personalizados
 import MyText from '../src/components/MyText';
 import EventCard from '../src/components/EventCard';
+import axios from 'axios';
 
 export default function Events() {
   return (

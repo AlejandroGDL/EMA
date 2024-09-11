@@ -13,7 +13,6 @@ import TecLogo from '../src/icons/TecLogo';
 import GobLogo from '../src/icons/GobLogo';
 
 import { useAuth } from '../hooks/AuthContext';
-import axios from 'axios';
 import Toast from 'react-native-toast-message';
 
 const Login = ({ navigation }) => {
@@ -21,33 +20,6 @@ const Login = ({ navigation }) => {
   const [StudentPassword, setStudentPassword] = React.useState('');
 
   const { signIn } = useAuth();
-
-  const signInOLD = async ({ StudentID, StudentPassword }) => {
-    console.log('Sign-in:', StudentID, StudentPassword);
-    const studentIDNumber = Number(StudentID);
-
-    try {
-      const response = await axios.post(
-        'https://mz15q3zq-3000.usw3.devtunnels.ms/api/login/',
-        {
-          StudentID: studentIDNumber,
-          StudentPassword: StudentPassword,
-        }
-      );
-
-      if (response.status === 200) {
-        navigation.navigate('Menu');
-      }
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: error.response.data,
-      });
-      console.error('Error during sign-in:', {
-        response: error.response.data,
-      });
-    }
-  };
 
   const handleSignIn = () => {
     signIn({ StudentID, StudentPassword });

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const User = require('./user');
+
 const EventSchema = new mongoose.Schema({
   Title: {
     type: String,
@@ -29,10 +31,12 @@ const EventSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  Assistance: {
-    type: [Number],
-    default: [],
-  },
+  Assistance: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 });
 
 class EventRepo {
@@ -128,20 +132,25 @@ class EventRepo {
       throw new Error('No hay eventos activos');
     }
 
-    //Validar que el estudiante no haya asistido previamente
-    if (activeEvent.Assistance.includes(StudentID)) {
-      console.error('El estudiante ya ha asistido a este evento');
-      throw new Error('El estudiante ya ha asistido a este evento');
+    //Buscar el usuario por ID
+    const user = await User.findOne({ StudentID });
+    if (!user) {
+      console.error('El usuario no existe');
+      throw new Error('El usuario no existe');
     }
 
-    //const updateUser = await UserRepo.register({
-    //  StudentID,
-    //  EventID: activeEvent._id,
-    //});
+    //Validar que el usuario no haya asistido previamente
+    if (activeEvent.Assistance.includes(user._id)) {
+      console.error('El usuario ya asistió a este evento');
+      throw new Error('El usuario ya asistió a este evento');
+    }
 
     //Registrar asistencia
-    activeEvent.Assistance.push(StudentID);
+    activeEvent.Assistance.push(user._id);
     await activeEvent.save();
+
+    user.AssistedEvents.push(activeEvent._id);
+    await user.save();
 
     return activeEvent;
   }

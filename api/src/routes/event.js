@@ -3,8 +3,9 @@ const router = express.Router();
 const eventController = require('../controllers/event');
 const multer = require('multer');
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+//const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
+const upload = multer({ dest: 'events_img/' });
 
 //Obtener todos los eventos
 router.get('/events', eventController.getEvents);

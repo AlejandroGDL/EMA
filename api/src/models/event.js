@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
 const User = require('./user');
+const fs = require('fs');
 
 const EventSchema = new mongoose.Schema({
   Title: {
@@ -20,8 +20,7 @@ const EventSchema = new mongoose.Schema({
     required: true,
   },
   Image: {
-    type: Buffer,
-    contentType: String,
+    type: String,
   },
   EndDateHour: {
     type: Date,
@@ -50,14 +49,16 @@ class EventRepo {
     //Evitar solapamiento de eventos
     const EndDateHour = await isOverlappingEvent(DateandHour, Duration);
 
+    //Renombrar imagen y extraer la nueva ruta
+    const NewPath = renameImage(Image);
+
     //Crear el evento
     const Event = await EventModel.create({
       Title,
       DateandHour: new Date(DateandHour),
       Duration,
       Place,
-      Image: Image.buffer,
-      contentType: Image.mimetype,
+      Image: NewPath,
       EndDateHour,
     });
 
@@ -230,6 +231,18 @@ function Validations(Title, DateandHour, Duration, Place) {
     console.error('El título, el lugar deben ser strings');
     throw new Error('El título, el lugar deben ser strings');
   }
+}
+
+// Renombrar la imagen
+function renameImage(file) {
+  const oldPath = file.path;
+  const newPath = `events_img/${Date.now()}_${file.originalname}`;
+  fs.rename(oldPath, newPath, (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
+  return newPath;
 }
 
 module.exports = EventRepo;

@@ -17,7 +17,7 @@ import Place from '../icons/Place';
 //Configuración de Axios
 import Axiosconfig from '../config/Axiosconfig';
 
-const EventCard = () => {
+const AdminEventCard = () => {
   const [Eventos, setEventos] = React.useState([]);
 
   const getEvents = async () => {
@@ -101,6 +101,20 @@ const EventCard = () => {
     }
   });
 
+  const DeleteEvent = async (event: any) => {
+    try {
+      console.log(event);
+      console.log(event._id);
+      const response = await Axiosconfig.delete('api/event/' + event._id);
+      console.log(response);
+      getEvents();
+    } catch (error) {
+      console.error('Error during delete-event:', {
+        response: error,
+      });
+    }
+  };
+
   return Eventos.map((event, id) => (
     <View
       style={styles.ConEventCard}
@@ -133,20 +147,28 @@ const EventCard = () => {
         </View>
       </View>
       <Separator />
-      <View>
+      <View style={styles.ConAdminEventCardButtons}>
         <MyButton
           TextProps={{
             color: Theme.colors.white,
           }}
         >
-          ¡Estaré allí!
+          Editar
+        </MyButton>
+        <MyButton
+          Function={() => DeleteEvent(event)}
+          TextProps={{
+            color: Theme.colors.white,
+          }}
+        >
+          Eliminar
         </MyButton>
       </View>
     </View>
   ));
 };
 
-export default EventCard;
+export default AdminEventCard;
 
 const styles = StyleSheet.create({
   ConEventCard: {
@@ -190,5 +212,11 @@ const styles = StyleSheet.create({
   ConEventInfo2: {
     gap: 10,
     alignItems: 'flex-start',
+  },
+  ConAdminEventCardButtons: {
+    flexDirection: 'row',
+    gap: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

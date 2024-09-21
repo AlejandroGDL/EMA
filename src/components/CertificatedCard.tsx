@@ -3,11 +3,10 @@ import React from 'react';
 
 import Theme from '../styles/Theme';
 
+//Componentes
 import MyText from './MyText';
 import MyButton from './MyButton';
 import Separator from './Separator';
-
-import User from '../UserData';
 
 //Iconos
 import Date from '../icons/Date';
@@ -15,8 +14,93 @@ import Clock from '../icons/Clock';
 import Duration from '../icons/Duration';
 import Place from '../icons/Place';
 
+//Configuración de Axios
+import Axiosconfig from '../config/Axiosconfig';
+
+//AuthContext
+import { useAuth } from '../../hooks/AuthContext';
+
 const CertificateCard = () => {
-  return User.assitedevents.map((event, id) => (
+  const [Events, setEvents] = React.useState([]);
+  const { user } = useAuth();
+
+  React.useEffect(() => {
+    Axiosconfig.get(`api/user/events/` + user.StudentID)
+      .then((res) => {
+        setEvents(res.data.AssistedEvents);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  Events.map((event) => {
+    const date = event.DateandHour.split('T');
+    const hour = date[1].split(':');
+    event.DateandHour = date[0];
+    event.Hour = hour[0] + ':' + hour[1];
+    //Eliminar a la imagen las primeras 7 letras
+    event.Image = event.Image.slice(7);
+
+    //Agregar PM o AM
+    if (hour[0] > 12) {
+      event.Hour = hour[0] - 12 + ':' + hour[1] + ' PM';
+    } else {
+      event.Hour = hour[0] + ':' + hour[1] + ' AM';
+    }
+
+    //Separar la fecha en un array
+    const dateArray = date[0].split('-');
+
+    //Cambiar el numero del mes a nombre
+    switch (dateArray[1]) {
+      case '01':
+        event.DateandHour = dateArray[2] + ' de Enero de ' + dateArray[0];
+        break;
+      case '02':
+        event.DateandHour = dateArray[2] + ' de Febrero de ' + dateArray[0];
+        break;
+      case '03':
+        event.DateandHour = dateArray[2] + ' de Marzo de ' + dateArray[0];
+        break;
+      case '04':
+        event.DateandHour = dateArray[2] + ' de Abril de ' + dateArray[0];
+        break;
+      case '05':
+        event.DateandHour = dateArray[2] + ' de Mayo de ' + dateArray[0];
+        break;
+      case '06':
+        event.DateandHour = dateArray[2] + ' de Junio de ' + dateArray[0];
+        break;
+      case '07':
+        event.DateandHour = dateArray[2] + ' de Julio de ' + dateArray[0];
+        break;
+      case '08':
+        event.DateandHour = dateArray[2] + ' de Agosto de ' + dateArray[0];
+        break;
+      case '09':
+        event.DateandHour = dateArray[2] + ' de Septiembre de ' + dateArray[0];
+        break;
+      case '10':
+        event.DateandHour = dateArray[2] + ' de Octubre de ' + dateArray[0];
+        break;
+      case '11':
+        event.DateandHour = dateArray[2] + ' de Noviembre de ' + dateArray[0];
+        break;
+      case '12':
+        event.DateandHour = dateArray[2] + ' de Diciembre de ' + dateArray[0];
+        break;
+    }
+
+    //Si la duración es menor a 60 minutos se muestra en minutos si no en horas
+    if (event.Duration < 60) {
+      event.Duration = event.Duration + ' Minutos';
+    } else {
+      event.Duration = event.Duration / 60 + ' Horas';
+    }
+  });
+
+  return Events.map((event, id) => (
     <View
       style={styles.ConEventCard}
       key={id}
@@ -31,13 +115,15 @@ const CertificateCard = () => {
       </View>
       <View>
         <Image
-          source={{ uri: event.Image }}
+          source={{
+            uri: 'https://mz15q3zq-3000.usw3.devtunnels.ms/' + event.Image,
+          }}
           style={styles.EventImage}
         />
       </View>
       <View style={styles.ConEventInfo}>
         <View style={styles.ConEventInfo1}>
-          <MyText icon={Date}> {event.Date}</MyText>
+          <MyText icon={Date}> {event.DateandHour}</MyText>
           <MyText icon={Clock}> {event.Hour}</MyText>
         </View>
         <View style={styles.ConEventInfo2}>
@@ -83,8 +169,8 @@ const styles = StyleSheet.create({
   },
 
   EventImage: {
-    width: 70,
-    height: 70,
+    width: 90,
+    height: 90,
     borderRadius: 50,
   },
 

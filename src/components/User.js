@@ -6,7 +6,7 @@ import MyText from './MyText';
 
 import { useAuth } from '../../hooks/AuthContext';
 
-const UserComponent = () => {
+const UserComponent = (props) => {
   const { user } = useAuth();
 
   return (
@@ -18,6 +18,7 @@ const UserComponent = () => {
       <MyText
         h2
         bold
+        {...props}
       >
         {user.StudentName} {user.StudentLastName}
       </MyText>
@@ -31,6 +32,7 @@ const styles = StyleSheet.create({
   ConUserComponent: {
     alignItems: 'center',
     marginVertical: 20,
+    gap: 10,
   },
 
   UserComponentImage: {

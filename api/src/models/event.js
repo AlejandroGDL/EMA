@@ -77,10 +77,16 @@ class EventRepo {
   static async find() {
     const EventModel = mongoose.model('Event', EventSchema);
 
-    //Buscar todos los eventos
+    // Buscar todos los eventos
     const events = await EventModel.find();
 
-    return events;
+    // Filtrar eventos que no sean de una fecha pasada
+    const currentDate = new Date();
+    const filteredEvents = events.filter(
+      (event) => event.DateandHour > currentDate
+    );
+
+    return filteredEvents;
   }
   // Eliminar un evento
   static async delete({ EventID }) {
@@ -89,8 +95,20 @@ class EventRepo {
     // Validar que el evento existe
     eventExistence(EventID);
 
-    //Eliminar el evento por ID
-    const event = await EventModel.deleteOne({ _id: EventID });
+    // Buscar el evento por ID
+    const event = await EventModel.findOne({ _id: EventID });
+
+    // Eliminar la imagen
+    if (event && event.Image) {
+      fs.unlink(event.Image, (err) => {
+        if (err) {
+          console.error(err);
+        }
+      });
+    }
+
+    // Eliminar el evento por ID
+    await EventModel.deleteOne({ _id: EventID });
 
     return event;
   }
@@ -150,6 +168,7 @@ class EventRepo {
     activeEvent.Assistance.push(user._id);
     await activeEvent.save();
 
+    user.StudentHours += activeEvent.Duration;
     user.AssistedEvents.push(activeEvent._id);
     await user.save();
 
@@ -212,9 +231,21 @@ async function findActive() {
 // Validaciones
 function Validations(Title, DateandHour, Duration, Place) {
   //Validar que todos los campos estén presentes
-  if (!Title || !DateandHour || !Duration || !Place) {
-    console.error('Todos los campos son requeridos');
-    throw new Error('Todos los campos son requeridos');
+  if (!Title) {
+    console.error('El titúlo es requerido');
+    throw new Error('El titúlo es requerido');
+  }
+  if (!DateandHour) {
+    console.error('La fecha es requerida');
+    throw new Error('La fecha es requerida');
+  }
+  if (!Duration) {
+    console.error('La duración es requerida');
+    throw new Error('La duración es requerida');
+  }
+  if (!Place) {
+    console.error('El lugar es requerido');
+    throw new Error('El lugar es requerido');
   }
   // Validar que la duración no sea negativa
   if (Duration <= 0) {
@@ -236,7 +267,7 @@ function Validations(Title, DateandHour, Duration, Place) {
 // Renombrar la imagen
 function renameImage(file) {
   const oldPath = file.path;
-  const newPath = `events_img/${Date.now()}_${file.originalname}`;
+  const newPath = `public/uploads/${Date.now()}_${file.originalname}`;
   fs.rename(oldPath, newPath, (err) => {
     if (err) {
       console.error(err);

@@ -5,7 +5,7 @@ const multer = require('multer');
 
 //const storage = multer.memoryStorage();
 // const upload = multer({ storage: storage });
-const upload = multer({ dest: 'events_img/' });
+const upload = multer({ dest: 'public/uploads' });
 
 //Obtener todos los eventos
 router.get('/events', eventController.getEvents);

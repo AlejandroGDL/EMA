@@ -13,6 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api', userRoutes);
 app.use('/api', eventRoutes);
+app.use('/', express.static('public'));
 
 //Ruta principal
 app.get('/', (req, res) => {

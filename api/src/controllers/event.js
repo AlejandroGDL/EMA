@@ -18,14 +18,14 @@ const createEvent = async (req, res) => {
   const Image = req.file;
 
   try {
-    const savedEvent = await EventRepo.create({
+    await EventRepo.create({
       Title,
       DateandHour,
       Duration,
       Place,
       Image,
     });
-    res.json(savedEvent);
+    res.json('Evento creado exitosamente');
   } catch (error) {
     res.json(error.message);
   }
@@ -56,7 +56,7 @@ const updateEvent = async (req, res) => {
       Place,
       Image,
     });
-    res.json(updatedEvent);
+    res.json('Evento actualizado');
   } catch (error) {
     res.json('Error al actualizar el evento', error.message);
   }
@@ -65,12 +65,6 @@ const updateEvent = async (req, res) => {
 //Controlador para eliminar un evento
 const deleteEvent = async (req, res) => {
   const { EventID } = req.params;
-
-  //Valida si el evento existe
-  const event = await EventRepo.findOne({ EventID });
-  if (!event) {
-    return res.json('El evento no existe');
-  }
 
   //Elimina el evento
   try {

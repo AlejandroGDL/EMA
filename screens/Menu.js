@@ -14,13 +14,17 @@ import Theme from '../src/styles/Theme';
 import Certificates from '../src/icons/Certificates';
 import AvailableEvents from '../src/icons/AvailableEvents';
 import CarreraBook from '../src/icons/CarreraBook';
+import Clock2 from '../src/icons/Clock2';
+import Semester from '../src/icons/Semester';
 
-import User from '../src/UserData';
 import UserComponent from '../src/components/User';
 
 const Menu = ({ navigation }) => {
-  const { signOut } = useAuth();
   const { user } = useAuth();
+
+  //Cambiar minutos a horas
+  const hours = user.StudentHours / 60;
+  user.StudentHours = hours;
 
   return (
     <View style={styles.IndexContainer}>
@@ -28,18 +32,18 @@ const Menu = ({ navigation }) => {
       <View>
         <InfoCard
           Title={'Carrera:'}
-          Info={user.StudentInfo.career}
+          Info={user.StudentCareer}
           Icon={CarreraBook}
         />
         <InfoCard
           Title={'Semestre:'}
-          Info={user.StudentInfo.semestre}
-          Icon={CarreraBook}
+          Info={user.StudentSemester}
+          Icon={Semester}
         />
         <InfoCard
           Title={'Horas acumuladas:'}
-          Info={user.StudentInfo.hours}
-          Icon={CarreraBook}
+          Info={user.StudentHours}
+          Icon={Clock2}
         />
       </View>
       <View style={styles.ConIndexButtons}>
@@ -78,7 +82,6 @@ const Menu = ({ navigation }) => {
         >
           Eventos Disponibles
         </MyButton>
-        <MyButton Function={signOut}>Cerrar Sesion</MyButton>
       </View>
     </View>
   );

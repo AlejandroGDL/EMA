@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
 const AuthContext = createContext();
-import axios from 'axios';
 import Toast from 'react-native-toast-message';
+
+//Configuracion de Axios
+import Axiosconfig from '../src/config/Axiosconfig';
 
 export const AuthProvider = ({ children, userToken, setUserToken }) => {
   const [user, setUser] = useState(null);
@@ -11,13 +13,10 @@ export const AuthProvider = ({ children, userToken, setUserToken }) => {
       const studentIDNumber = Number(StudentID);
 
       try {
-        const response = await axios.post(
-          'https://mz15q3zq-3000.usw3.devtunnels.ms/api/login/',
-          {
-            StudentID: studentIDNumber,
-            StudentPassword: StudentPassword,
-          }
-        );
+        const response = await Axiosconfig.post('api/login/', {
+          StudentID: studentIDNumber,
+          StudentPassword: StudentPassword,
+        });
         //Guarda el usuario en el estado
         setUser(response.data);
 

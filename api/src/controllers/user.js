@@ -9,7 +9,10 @@ const createUser = async (req, res) => {
     StudentID,
     StudentPassword,
     StudentImage,
-    StudentInfo,
+    StudentCareer,
+    StudentSemester,
+    StudentHours,
+    IsAdmin,
     AssitedEvents,
   } = req.body;
 
@@ -20,7 +23,10 @@ const createUser = async (req, res) => {
       StudentID,
       StudentPassword,
       StudentImage,
-      StudentInfo,
+      StudentCareer,
+      StudentSemester,
+      StudentHours,
+      IsAdmin,
       AssitedEvents,
     });
     res.json(savedUser);

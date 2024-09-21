@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
   StudentName: {
     type: String,
     required: true,
+    unique: true,
   },
   StudentLastName: {
     type: String,
@@ -22,9 +23,22 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  StudentInfo: {
-    type: Object,
+  StudentCareer: {
+    type: String,
     required: true,
+  },
+  StudentSemester: {
+    type: Number,
+    required: true,
+  },
+  StudentHours: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  IsAdmin: {
+    type: Boolean,
+    default: false,
   },
   AssistedEvents: [
     {
@@ -45,7 +59,10 @@ class UserRepo {
     StudentID,
     StudentPassword,
     StudentImage,
-    StudentInfo,
+    StudentCareer,
+    StudentSemester,
+    StudentHours,
+    IsAdmin,
     AssistedEvents,
   }) {
     if (!StudentName) {
@@ -68,9 +85,9 @@ class UserRepo {
       console.error('La imagen es requerida');
       throw new Error('La imagen es requerida');
     }
-    if (!StudentInfo) {
-      console.error('La información es requerida');
-      throw new Error('La información es requerida');
+    if (!StudentSemester) {
+      console.error('El semestre es requerido');
+      throw new Error('El semestre es requerido');
     }
     if (StudentPassword.length < 8) {
       console.error('La contraseña debe tener al menos 8 caracteres');
@@ -80,15 +97,21 @@ class UserRepo {
       console.error('El ID debe ser un número');
       throw new Error('El ID debe ser un número');
     }
-    if (typeof StudentInfo !== 'object') {
-      console.error('El campo de información debe ser un objeto');
-      throw new Error('El campo de información debe ser un objeto');
+    if (typeof StudentSemester !== 'number') {
+      console.error('El semestre debe ser un número');
+      throw new Error('El semestre debe ser un número');
     }
+    if (typeof StudentHours !== 'number') {
+      console.error('Las horas deben ser un número');
+      throw new Error('Las horas deben ser un número');
+    }
+
     if (
       typeof StudentName !== 'string' ||
       typeof StudentLastName !== 'string' ||
       typeof StudentImage !== 'string' ||
-      typeof StudentPassword !== 'string'
+      typeof StudentPassword !== 'string' ||
+      typeof StudentCareer !== 'string'
     ) {
       console.error(
         'El Nombre, Apellidos, Imagen y Contraseña deben ser de tipo string'
@@ -108,7 +131,10 @@ class UserRepo {
       StudentID,
       StudentPassword: hashedPassword,
       StudentImage,
-      StudentInfo,
+      StudentCareer,
+      StudentSemester,
+      StudentHours,
+      IsAdmin,
       AssistedEvents,
     });
 
@@ -155,7 +181,10 @@ class UserRepo {
       StudentLastName: User.StudentLastName,
       StudentID: User.StudentID,
       StudentImage: User.StudentImage,
-      StudentInfo: User.StudentInfo,
+      StudentCareer: User.StudentCareer,
+      StudentSemester: User.StudentSemester,
+      StudentHours: User.StudentHours,
+      IsAdmin: User.IsAdmin,
       AssistedEvents: User.AssistedEvents,
     };
   }
@@ -166,7 +195,10 @@ class UserRepo {
     StudentLastName,
     StudentPassword,
     StudentImage,
-    StudentInfo,
+    StudentCareer,
+    StudentSemester,
+    StudentHours,
+    IsAdmin,
   }) {
     Validation.StudentID(StudentID);
     const UserModel = mongoose.model('User', UserSchema);
@@ -181,7 +213,10 @@ class UserRepo {
             StudentLastName,
             StudentPassword: hashedPassword,
             StudentImage,
-            StudentInfo,
+            StudentCareer,
+            StudentSemester,
+            StudentHours,
+            IsAdmin,
           },
           { new: true }
         );

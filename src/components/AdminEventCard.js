@@ -1,5 +1,6 @@
 import { StyleSheet, View, Image } from 'react-native';
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 import Theme from '../styles/Theme';
 
@@ -18,6 +19,7 @@ import Place from '../icons/Place';
 import Axiosconfig from '../config/Axiosconfig';
 
 const AdminEventCard = () => {
+  const nav = useNavigation();
   const [Eventos, setEventos] = React.useState([]);
 
   const getEvents = async () => {
@@ -38,10 +40,8 @@ const AdminEventCard = () => {
   Eventos.map((event) => {
     const date = event.DateandHour.split('T');
     const hour = date[1].split(':');
-    event.DateandHour = date[0];
+    //event.DateandHour = date[0];
     event.Hour = hour[0] + ':' + hour[1];
-    //Eliminar a la imagen las primeras 7 letras
-    event.Image = event.Image.slice(7);
 
     //Agregar PM o AM
     if (hour[0] > 12) {
@@ -56,55 +56,56 @@ const AdminEventCard = () => {
     //Cambiar el numero del mes a nombre
     switch (dateArray[1]) {
       case '01':
-        event.DateandHour = dateArray[2] + ' de Enero de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Enero de ' + dateArray[0];
         break;
       case '02':
-        event.DateandHour = dateArray[2] + ' de Febrero de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Febrero de ' + dateArray[0];
         break;
       case '03':
-        event.DateandHour = dateArray[2] + ' de Marzo de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Marzo de ' + dateArray[0];
         break;
       case '04':
-        event.DateandHour = dateArray[2] + ' de Abril de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Abril de ' + dateArray[0];
         break;
       case '05':
-        event.DateandHour = dateArray[2] + ' de Mayo de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Mayo de ' + dateArray[0];
         break;
       case '06':
-        event.DateandHour = dateArray[2] + ' de Junio de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Junio de ' + dateArray[0];
         break;
       case '07':
-        event.DateandHour = dateArray[2] + ' de Julio de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Julio de ' + dateArray[0];
         break;
       case '08':
-        event.DateandHour = dateArray[2] + ' de Agosto de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Agosto de ' + dateArray[0];
         break;
       case '09':
-        event.DateandHour = dateArray[2] + ' de Septiembre de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Septiembre de ' + dateArray[0];
         break;
       case '10':
-        event.DateandHour = dateArray[2] + ' de Octubre de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Octubre de ' + dateArray[0];
         break;
       case '11':
-        event.DateandHour = dateArray[2] + ' de Noviembre de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Noviembre de ' + dateArray[0];
         break;
       case '12':
-        event.DateandHour = dateArray[2] + ' de Diciembre de ' + dateArray[0];
+        event.NewDate = dateArray[2] + ' de Diciembre de ' + dateArray[0];
         break;
     }
 
     //Si la duración es menor a 60 minutos se muestra en minutos si no en horas
     if (event.Duration < 60) {
-      event.Duration = event.Duration + ' Minutos';
+      event.Duration = event.Duration;
+      event.DurationString = event.Duration + ' Minutos';
     } else {
-      event.Duration = event.Duration / 60 + ' Horas';
+      event.DurationString = event.Duration / 60 + ' Horas';
+      event.Duration = event.Duration / 60;
     }
   });
 
-  const DeleteEvent = async (event: any) => {
+  // FUnción para eliminar un evento
+  const DeleteEvent = async (event) => {
     try {
-      console.log(event);
-      console.log(event._id);
       const response = await Axiosconfig.delete('api/event/' + event._id);
       console.log(response);
       getEvents();
@@ -113,6 +114,11 @@ const AdminEventCard = () => {
         response: error,
       });
     }
+  };
+
+  //Función para editar un evento
+  const EditEvent = (event) => {
+    nav.navigate('EditForm', { event });
   };
 
   return Eventos.map((event, id) => (
@@ -131,24 +137,27 @@ const AdminEventCard = () => {
       <View>
         <Image
           source={{
-            uri: 'https://mz15q3zq-3000.usw3.devtunnels.ms/' + event.Image,
+            uri:
+              'https://mz15q3zq-3000.usw3.devtunnels.ms//uploads/' +
+              event.Image,
           }}
           style={styles.EventImage}
         />
       </View>
       <View style={styles.ConEventInfo}>
         <View style={styles.ConEventInfo1}>
-          <MyText icon={Date}> {event.DateandHour}</MyText>
+          <MyText icon={Date}> {event.NewDate}</MyText>
           <MyText icon={Clock}> {event.Hour}</MyText>
         </View>
         <View style={styles.ConEventInfo2}>
-          <MyText icon={Duration}> {event.Duration}</MyText>
+          <MyText icon={Duration}> {event.DurationString}</MyText>
           <MyText icon={Place}> {event.Place}</MyText>
         </View>
       </View>
       <Separator />
       <View style={styles.ConAdminEventCardButtons}>
         <MyButton
+          Function={() => EditEvent(event)}
           TextProps={{
             color: Theme.colors.white,
           }}

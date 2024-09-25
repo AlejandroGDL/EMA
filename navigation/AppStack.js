@@ -18,6 +18,7 @@ import CertificatesScreen from '../screens/Certificates';
 import AdminScreen from '../screens/AdminScreens/AdminMenu';
 import CreateEvent from '../screens/AdminScreens/CreateEvent';
 import EditEvent from '../screens/AdminScreens/EditEvent';
+import FormEdit from '../screens/AdminScreens/FormEditEvent';
 
 //Icons
 import Settings from '../src/icons/Settings';
@@ -135,6 +136,19 @@ const AppStack = () => {
       <Stack.Screen
         name='Edit'
         component={EditEvent}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
+      />
+      <Stack.Screen
+        name='EditForm'
+        component={FormEdit}
         options={{
           title: '',
           titleVisible: false,

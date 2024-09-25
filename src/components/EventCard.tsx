@@ -40,8 +40,6 @@ const EventCard = () => {
     const hour = date[1].split(':');
     event.DateandHour = date[0];
     event.Hour = hour[0] + ':' + hour[1];
-    //Eliminar a la imagen las primeras 7 letras
-    event.Image = event.Image.slice(7);
 
     //Agregar PM o AM
     if (hour[0] > 12) {
@@ -106,6 +104,13 @@ const EventCard = () => {
       style={styles.ConEventCard}
       key={id}
     >
+      {event.IsActive ? (
+        <View style={styles.ConEventCardWarning}>
+          <MyText color={Theme.colors.green}>
+            ¡Evento actualmente en curso!
+          </MyText>
+        </View>
+      ) : null}
       <View>
         <MyText
           medium
@@ -117,7 +122,9 @@ const EventCard = () => {
       <View>
         <Image
           source={{
-            uri: 'https://mz15q3zq-3000.usw3.devtunnels.ms/' + event.Image,
+            uri:
+              'https://mz15q3zq-3000.usw3.devtunnels.ms//uploads/' +
+              event.Image,
           }}
           style={styles.EventImage}
         />
@@ -132,16 +139,20 @@ const EventCard = () => {
           <MyText icon={Place}> {event.Place}</MyText>
         </View>
       </View>
-      <Separator />
-      <View>
-        <MyButton
-          TextProps={{
-            color: Theme.colors.white,
-          }}
-        >
-          ¡Estaré allí!
-        </MyButton>
-      </View>
+      {event.IsActive ? null : (
+        <>
+          <Separator />
+          <View>
+            <MyButton
+              TextProps={{
+                color: Theme.colors.white,
+              }}
+            >
+              ¡Estaré allí, Notifícame!
+            </MyButton>
+          </View>
+        </>
+      )}
     </View>
   ));
 };
@@ -167,6 +178,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
     gap: 10,
+  },
+
+  ConEventCardWarning: {
+    borderWidth: 1,
+    borderColor: Theme.colors.green,
+    padding: 5,
+    borderRadius: 10,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   EventImage: {

@@ -93,7 +93,7 @@ class EventRepo {
     const EventModel = mongoose.model('Event', EventSchema);
 
     // Validar que el evento existe
-    eventExistence(EventID);
+    await eventExistence(EventID);
 
     // Buscar el evento por ID
     const event = await EventModel.findOne({ _id: EventID });
@@ -113,16 +113,35 @@ class EventRepo {
     return event;
   }
   // Actualizar un evento
-  static async update({ EventID, Title, DateandHour, Duration, Place, Image }) {
+  static async update({ EventID, Title, DateandHour, Duration, Place }) {
     const EventModel = mongoose.model('Event', EventSchema);
+
     // Validar que el evento existe
-    eventExistence(EventID);
+    await eventExistence(EventID);
 
     // Validaciones
     Validations(Title, DateandHour, Duration, Place);
 
     // Validar que no se solapen eventos
-    const EndDateHour = await isOverlappingEvent(DateandHour, Duration);
+    const EndDateHour = await isOverlappingUpdateEvent(
+      EventID,
+      DateandHour,
+      Duration
+    );
+
+    // Buscar el evento por ID
+    // const event = await EventModel.findOne({ _id: EventID });
+
+    // // Eliminar la imagen anterior
+    // if (event && event.Image) {
+    //   fs.unlink(event.Image, (err) => {
+    //     if (err) {
+    //       console.error(err);
+    //     }
+    //   });
+    // }
+
+    //const NewPath = renameImage(Image);
 
     //Crear el evento
     const updateEvent = await EventModel.findByIdAndUpdate(
@@ -132,8 +151,6 @@ class EventRepo {
         DateandHour: new Date(DateandHour),
         Duration,
         Place,
-        Image: Image.buffer,
-        contentType: Image.mimetype,
         EndDateHour,
       },
       { new: true }
@@ -189,6 +206,36 @@ async function isOverlappingEvent(DateandHour, Duration) {
 
   // Validar que no se solapen eventos
   const isOverlapping = await EventModel.findOne({
+    $or: [
+      {
+        DateandHour: { $lt: EndDateHour },
+        EndDateHour: { $gt: DateHour },
+      },
+    ],
+  });
+
+  if (isOverlapping) {
+    console.error('El evento se solapa con otro evento existente');
+    throw new Error('El evento se solapa con otro evento existente');
+  }
+
+  return EndDateHour;
+}
+
+// Solapamiento de eventos actualizado
+async function isOverlappingUpdateEvent(EventID, DateandHour, Duration) {
+  const EventModel = mongoose.model('Event', EventSchema);
+
+  // Convertir la cadena a tipo date
+  const DateHour = new Date(DateandHour);
+  // Convertir la duración a milisegundos
+  const DurationMilliseconds = Duration * 60 * 1000;
+  // Calcular la hora de finalización del evento
+  const EndDateHour = new Date(DateHour.getTime() + DurationMilliseconds);
+
+  // Validar que no se solapen eventos, ignorando el evento con el ID proporcionado
+  const isOverlapping = await EventModel.findOne({
+    _id: { $ne: EventID },
     $or: [
       {
         DateandHour: { $lt: EndDateHour },
@@ -267,13 +314,14 @@ function Validations(Title, DateandHour, Duration, Place) {
 // Renombrar la imagen
 function renameImage(file) {
   const oldPath = file.path;
-  const newPath = `public/uploads/${Date.now()}_${file.originalname}`;
+  const newFileName = `${Date.now()}_${file.originalname}`;
+  const newPath = `public/uploads/${newFileName}`;
   fs.rename(oldPath, newPath, (err) => {
     if (err) {
       console.error(err);
     }
   });
-  return newPath;
+  return newFileName;
 }
 
 module.exports = EventRepo;

@@ -34,7 +34,7 @@ const AdminMenu = ({ navigation }) => {
             navigation.navigate('Edit');
           }}
         >
-          Editar Evento
+          Editar o Eliminar un Evento
         </MyButton>
       </View>
     </View>

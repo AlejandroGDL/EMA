@@ -1,5 +1,5 @@
-import { StyleSheet, View, TextInput, Image, ScrollView } from 'react-native';
-import React from 'react';
+import { StyleSheet, View, TextInput, Image, params } from 'react-native';
+import React, { useEffect } from 'react';
 
 //Components
 import MyText from '../../src/components/MyText';
@@ -9,6 +9,12 @@ import Separator from '../../src/components/Separator';
 //DatePicker and ImagePicker
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 import * as ImagePicker from 'expo-image-picker';
 
 import Theme from '../../src/styles/Theme';
@@ -17,59 +23,80 @@ import Theme from '../../src/styles/Theme';
 import Axiosconfig from '../../src/config/Axiosconfig';
 import Toast from 'react-native-toast-message';
 
-const CreateEvent = () => {
-  const [date, setDate] = React.useState(dayjs().toDate());
+import { useNavigation, useRoute } from '@react-navigation/native';
+
+const FormEdit = () => {
+  const nav = useNavigation();
+
+  const route = useRoute();
+  const { event } = route.params;
+
+  const [date, setDate] = React.useState(dayjs(event.DateandHour).toDate());
   const [isVisible, setIsVisible] = React.useState(false);
-  const [image, setImage] = React.useState(null);
+  //Image
+  const [oldImage, setOldImage] = React.useState(event.Image);
+  const [image, setImage] = React.useState(event.Image);
+  const [changeImage, setChangeImage] = React.useState(false);
 
   //Inputs
-  const [name, setName] = React.useState('');
-  const [place, setPlace] = React.useState('');
-  const [duration, setDuration] = React.useState('');
+  const [name, setName] = React.useState(event.Title);
+  const [place, setPlace] = React.useState(event.Place);
+  const [duration, setDuration] = React.useState(event.Duration.toString());
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [4, 4],
       quality: 1,
     });
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      setChangeImage(true);
     }
   };
 
-  const CreateEvent = async () => {
+  const UpdateEvent = async () => {
     try {
       const formData = new FormData();
       formData.append('Title', name);
       formData.append('DateandHour', dayjs(date).format('YYYY-MM-DDTHH:mm:ss'));
-      formData.append('Duration', duration * 60);
+      formData.append('Duration', parseInt(duration, 10) * 60);
       formData.append('Place', place);
-      if (image) {
-        formData.append('Image', {
-          uri: image,
-          name: 'event_image.jpg',
-          type: 'image/jpeg',
-        });
-      }
-      const response = await Axiosconfig.post('api/event', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      // formData.append('OldImage', oldImage);
+      // if (image) {
+      //   formData.append('Image', {
+      //     uri: image,
+      //     name: 'event_image.jpg',
+      //     type: 'image/jpeg',
+      //   });
+      // }
+      const response = await Axiosconfig.put(
+        'api/event/' + event._id,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
       if (response.status === 200) {
         Toast.show({ type: 'success', text1: response.data });
         setName('');
         setPlace('');
         setDuration('');
-        setDate(dayjs().toDate());
+        setDate(new Date());
         setImage(null);
+        setTimeout(() => {
+          nav.navigate('Admin');
+        }, 1000);
       }
-      Toast.show({ type: 'error', text1: response.data });
     } catch (error) {
-      Toast.show({ type: 'error', text1: error.response.data });
+      Toast.show({
+        type: 'error',
+        text1: error.response?.data || 'Error al actualizar el evento',
+      });
     }
   };
 
@@ -125,6 +152,16 @@ const CreateEvent = () => {
           />
         </View>
 
+        {/* Aviso Fecha y Hora */}
+        <View style={styles.ConCreateEventFormWarning}>
+          <MyText
+            bold
+            color={Theme.colors.red}
+          >
+            ! Verifica la fecha y hora antes de actualizar
+          </MyText>
+        </View>
+
         {/* Event Date and Hour Input */}
         <View style={styles.ConCreateEventFormDateCon}>
           <MyText bold>Fecha Evento:</MyText>
@@ -174,8 +211,12 @@ const CreateEvent = () => {
             </View>
 
             <View>
-              <MyText>{dayjs(date).format('DD/MM/YYYY')}</MyText>
-              <MyText>{dayjs(date).format('HH:mm')}</MyText>
+              <MyText>
+                {dayjs(date).tz('America/Mexico_City').format('DD/MM/YYYY')}
+              </MyText>
+              <MyText>
+                {dayjs(date).tz('America/Mexico_City').format('HH:mm:ss')}
+              </MyText>
             </View>
           </View>
         </View>
@@ -184,6 +225,17 @@ const CreateEvent = () => {
         <View style={styles.ConCreateEventFormImageCon}>
           <MyText bold>Imagen Evento</MyText>
           <Separator />
+
+          {/* Aviso*/}
+          <View style={styles.ConCreateEventFormWarning}>
+            <MyText
+              bold
+              color={Theme.colors.red}
+            >
+              Temporalmente no funciona la actualización de imagen
+            </MyText>
+          </View>
+
           <View style={styles.ConCreateEventFormImageCon1}>
             <MyButton
               Function={pickImage}
@@ -196,7 +248,12 @@ const CreateEvent = () => {
             </MyButton>
             {image && (
               <Image
-                source={{ uri: image }}
+                source={{
+                  uri: changeImage
+                    ? image
+                    : 'https://mz15q3zq-3000.usw3.devtunnels.ms//uploads/' +
+                      event.Image,
+                }}
                 style={{ width: 90, height: 90, borderRadius: 100 }}
               />
             )}
@@ -207,14 +264,14 @@ const CreateEvent = () => {
       <View style={styles.ConCreateButtonCon}>
         {/* Event Create Button */}
         <MyButton
-          Function={CreateEvent}
+          Function={UpdateEvent}
           TextProps={{
             h3: true,
             bold: true,
             color: Theme.colors.white,
           }}
         >
-          Crear Evento
+          Actualizar Evento
         </MyButton>
       </View>
 
@@ -223,7 +280,7 @@ const CreateEvent = () => {
   );
 };
 
-export default CreateEvent;
+export default FormEdit;
 
 const styles = StyleSheet.create({
   ConCreateEvent: {
@@ -263,6 +320,16 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.colors.white,
     borderRadius: Theme.radius.medium,
     padding: 10,
+  },
+  ConCreateEventFormWarning: {
+    backgroundColor: Theme.colors.warning,
+    padding: 10,
+    borderRadius: Theme.radius.medium,
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    borderColor: Theme.colors.red,
+    borderWidth: 1,
   },
   ConCreateEventFormDateCon1: {
     display: 'flex',

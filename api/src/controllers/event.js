@@ -45,20 +45,21 @@ const getEvents = async (req, res) => {
 const updateEvent = async (req, res) => {
   const { EventID } = req.params;
   const { Title, DateandHour, Duration, Place } = req.body;
-  const Image = req.file;
 
   try {
-    const updatedEvent = await EventRepo.update({
+    await EventRepo.update({
       EventID,
       Title,
       DateandHour,
       Duration,
       Place,
-      Image,
     });
     res.json('Evento actualizado');
   } catch (error) {
-    res.json('Error al actualizar el evento', error.message);
+    res.json({
+      message: 'Error al actualizar el evento',
+      error: error.message,
+    });
   }
 };
 

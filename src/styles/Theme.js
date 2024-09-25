@@ -5,6 +5,8 @@ const Theme = {
     black: '#000000',
     secundary_black: '#637587',
     white: '#FFFFFF',
+    red: '#ff0000d6',
+    green: '#00ff00',
   },
 
   fonts: {

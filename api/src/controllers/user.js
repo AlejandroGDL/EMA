@@ -66,7 +66,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-//Controlado para obtener los eventos asistidos por un usuario
+//Controlador para obtener los eventos asistidos por un usuario
 const getAssistedEvents = async (req, res) => {
   const { StudentID } = req.params;
 
@@ -78,4 +78,56 @@ const getAssistedEvents = async (req, res) => {
   }
 };
 
-module.exports = { createUser, getUser, loginUser, getAssistedEvents };
+//Controlador para obtener el token de push
+const getPushToken = async (req, res) => {
+  const { PushToken, StudentID } = req.body;
+
+  try {
+    const user = await UserRepo.getPushToken({ PushToken, StudentID });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json('Error al insertar el token', error.message);
+  }
+};
+
+//Controlador para enviar notificaciones
+const sendNotification = async (req, res) => {
+  const { StudentID, Body } = req.body;
+
+  try {
+    const user = await UserRepo.sendNotification({ StudentID, Body });
+    res.json(user);
+  } catch (error) {
+    res.json({
+      message: 'Error al actualizar el evento',
+      error: error.message,
+    });
+  }
+};
+
+const changePasswordFirstTime = async (req, res) => {
+  const { StudentID, StudentPassword } = req.body;
+
+  try {
+    const user = await UserRepo.updatePasswordFirstTime({
+      StudentID,
+      StudentPassword,
+    });
+    res.json(user);
+  } catch (error) {
+    res.json({
+      message: 'Error al actualizar la contraseña',
+      error: error.message,
+    });
+  }
+};
+
+module.exports = {
+  createUser,
+  getUser,
+  loginUser,
+  getAssistedEvents,
+  getPushToken,
+  sendNotification,
+  changePasswordFirstTime,
+};

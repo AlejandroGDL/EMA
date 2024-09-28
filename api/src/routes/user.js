@@ -10,5 +10,11 @@ router.post('/user', userController.createUser);
 router.post('/login', userController.loginUser);
 //Eventos asistidos
 router.get('/user/events/:StudentID', userController.getAssistedEvents);
+//Obtener Push Token
+router.post('/user/pushToken', userController.getPushToken);
+//Enviar notificación
+router.post('/user/sendNotification', userController.sendNotification);
+//Actualizar contraseña usuario (si es la primera vez)
+router.post('/user/isChangedPassword', userController.changePasswordFirstTime);
 
 module.exports = router;

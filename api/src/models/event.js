@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const User = require('./user');
 const fs = require('fs');
 
+const schedule = require('node-schedule');
+const moment = require('moment-timezone');
+
 const EventSchema = new mongoose.Schema({
   Title: {
     type: String,
@@ -62,6 +65,9 @@ class EventRepo {
       EndDateHour,
     });
 
+    //Activar el evento
+    await activateEvent(Event._id, DateandHour, EndDateHour);
+
     return Event;
   }
   // Buscar un evento
@@ -80,10 +86,13 @@ class EventRepo {
     // Buscar todos los eventos
     const events = await EventModel.find();
 
-    // Filtrar eventos que no sean de una fecha pasada
+    // Filtrar eventos que no sean de un día anterior
     const currentDate = new Date();
+    const oneDayAgo = new Date(currentDate);
+    oneDayAgo.setDate(currentDate.getDate() - 1);
+
     const filteredEvents = events.filter(
-      (event) => event.DateandHour > currentDate
+      (event) => event.DateandHour > oneDayAgo
     );
 
     return filteredEvents;
@@ -300,10 +309,10 @@ function Validations(Title, DateandHour, Duration, Place) {
     throw new Error('La duración no puede ser negativa');
   }
   // Validar que la fecha no sea anterior a la actual
-  if (new Date(DateandHour) < new Date()) {
-    console.error('La fecha no puede ser anterior a la actual');
-    throw new Error('La fecha no puede ser anterior a la actual');
-  }
+  // if (new Date(DateandHour) < new Date()) {
+  //   console.error('La fecha no puede ser anterior a la actual');
+  //   throw new Error('La fecha no puede ser anterior a la actual');
+  // }
   // Validar que el título y el lugar sean strings
   if (typeof Title !== 'string' || typeof Place !== 'string') {
     console.error('El título, el lugar deben ser strings');
@@ -322,6 +331,66 @@ function renameImage(file) {
     }
   });
   return newFileName;
+}
+
+// Activar un evento
+async function activateEvent(EventID, DateandHour, EndDateHour) {
+  const EventModel = mongoose.model('Event', EventSchema);
+
+  // Extraer la fecha y hora del evento
+  const año = DateandHour.slice(0, 4);
+  const mes = DateandHour.slice(5, 7);
+  const dia = DateandHour.slice(8, 10);
+  const hora = DateandHour.slice(11, 13);
+  const minuto = DateandHour.slice(14, 16);
+
+  // Crear una tarea programada para activar el evento
+  schedule.scheduleJob(new Date(año, mes - 1, dia, hora, minuto), async () => {
+    //Buscar el evento por ID y actualizarlo
+    try {
+      const event = await EventModel.findByIdAndUpdate(
+        EventID,
+        { IsActive: true },
+        { new: true }
+      );
+      if (event) {
+        console.log(`Event ${EventID} activated successfully.`);
+      } else {
+        console.error(`Event ${EventID} not found.`);
+      }
+    } catch (error) {
+      console.error('Error al activar el evento:', error);
+    }
+  });
+
+  // Extraer la fecha y hora de finalización del evento
+  const endYear = EndDateHour.toISOString().slice(0, 4);
+  const endMonth = EndDateHour.toISOString().slice(5, 7);
+  const endDay = EndDateHour.toISOString().slice(8, 10);
+  const endHour = EndDateHour.toISOString().slice(11, 13);
+  const endMinute = EndDateHour.toISOString().slice(14, 16);
+
+  // Crear una tarea programada para desactivar el evento
+  schedule.scheduleJob(
+    new Date(endYear, endMonth - 1, endDay, endHour, endMinute),
+    async () => {
+      //Buscar el evento por ID y actualizarlo
+      try {
+        const event = await EventModel.findByIdAndUpdate(
+          EventID,
+          { IsActive: false },
+          { new: true }
+        );
+        if (event) {
+          console.log(`Event ${EventID} deactivated successfully.`);
+        } else {
+          console.error(`Event ${EventID} not found.`);
+        }
+      } catch (error) {
+        console.error('Error al desactivar el evento:', error);
+      }
+    }
+  );
 }
 
 module.exports = EventRepo;

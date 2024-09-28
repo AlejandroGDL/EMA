@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const fetch = (...args) =>
+  import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 const UserSchema = new mongoose.Schema({
   StudentName: {
@@ -37,6 +39,13 @@ const UserSchema = new mongoose.Schema({
     default: 0,
   },
   IsAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  ExpoPushToken: {
+    type: String,
+  },
+  IsPasswordChanged: {
     type: Boolean,
     default: false,
   },
@@ -241,6 +250,81 @@ class UserRepo {
       'AssistedEvents'
     );
     return User;
+  }
+
+  // Obtener token de push
+  static async getPushToken({ StudentID, PushToken }) {
+    Validation.StudentID(StudentID);
+    const UserModel = mongoose.model('User', UserSchema);
+
+    const User = await UserModel.findOneAndUpdate(
+      { StudentID },
+      { ExpoPushToken: PushToken },
+      { new: true }
+    );
+    return User;
+  }
+
+  // Enviar notificación
+  static async sendNotification({ StudentID, Body }) {
+    const UserModel = mongoose.model('User', UserSchema);
+
+    const User = await UserModel.findOne({ StudentID });
+
+    // Enviar notificación
+    const message = {
+      to: User.ExpoPushToken,
+      sound: 'default',
+      title: 'Notificación',
+      body: Body,
+    };
+
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+
+    return User;
+  }
+
+  //Actualizar Contraseña
+  static async updatePasswordFirstTime({ StudentID, StudentPassword }) {
+    //Validar el ID y la contraseña
+    Validation.StudentID(StudentID);
+    Validation.StudentPassword(StudentPassword);
+
+    //Modelo de usuario
+    const UserModel = mongoose.model('User', UserSchema);
+
+    //Buscar el usuario
+    const User = await UserModel.findOne({ StudentID });
+
+    //Validar si la contraseña es igual a la anterior
+    const isPasswordValid = await bcrypt.compare(
+      StudentPassword,
+      User.StudentPassword
+    );
+
+    // Si la contraseña es igual a la anterior, lanzar un error
+    if (isPasswordValid) {
+      throw new Error('La nueva contraseña no puede ser igual a la anterior');
+    }
+
+    //Hashear la nueva contraseña
+    const hashedPassword = await bcrypt.hash(StudentPassword, 1);
+
+    //Actualizar la contraseña y cambiar el estado de IsPasswordChanged a true
+    const UpdatedUser = await UserModel.findOneAndUpdate(
+      { StudentID },
+      { StudentPassword: hashedPassword, IsPasswordChanged: true },
+      { new: true }
+    );
+
+    return UpdatedUser;
   }
 }
 

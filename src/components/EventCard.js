@@ -1,5 +1,5 @@
 import { StyleSheet, View, Image } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 
 import Theme from '../styles/Theme';
 
@@ -17,12 +17,25 @@ import Place from '../icons/Place';
 //Configuración de Axios
 import Axiosconfig from '../config/Axiosconfig';
 
+// User context
+import { useAuth } from '../../hooks/AuthContext';
+
+// Notificaciones
+import Toast from 'react-native-toast-message';
+
 const EventCard = () => {
   const [Eventos, setEventos] = React.useState([]);
+  const { user } = useAuth();
 
   const getEvents = async () => {
     try {
       const Eventos = await Axiosconfig.get('api/events');
+
+      if (!Eventos.data) {
+        console.error('No hay eventos');
+        return;
+      }
+
       setEventos(Eventos.data);
     } catch (error) {
       console.error('Error during get-events:', {
@@ -99,16 +112,38 @@ const EventCard = () => {
     }
   });
 
+  const AgregarListaNotificacion = async (event) => {
+    try {
+      await Axiosconfig.post('api/registerlistnotify', {
+        EventID: event._id,
+        StudentID: user.StudentID,
+      });
+      Toast.show({
+        type: 'success',
+        text1: 'Ya recibiras notificaciones de este evento, ¡No faltes!',
+      });
+    } catch (error) {
+      console.error('Error al registrar las notificaciones:', {
+        response: error,
+      });
+    }
+  };
+
   return Eventos.map((event, id) => (
     <View
       style={styles.ConEventCard}
       key={id}
     >
       {event.IsActive ? (
-        <View style={styles.ConEventCardWarning}>
+        <View style={styles.ConEventCardIsActive}>
           <MyText color={Theme.colors.green}>
             ¡Evento actualmente en curso!
           </MyText>
+        </View>
+      ) : null}
+      {event.IsEnd ? (
+        <View style={styles.ConEventCardIsEnd}>
+          <MyText color={Theme.colors.red}>¡Este evento a finalizado!</MyText>
         </View>
       ) : null}
       <View>
@@ -139,11 +174,14 @@ const EventCard = () => {
           <MyText icon={Place}> {event.Place}</MyText>
         </View>
       </View>
-      {event.IsActive ? null : (
+      {event.IsActive || event.IsEnd ? null : (
         <>
           <Separator />
           <View>
             <MyButton
+              Function={() => {
+                AgregarListaNotificacion(event);
+              }}
               TextProps={{
                 color: Theme.colors.white,
               }}
@@ -153,6 +191,7 @@ const EventCard = () => {
           </View>
         </>
       )}
+      <Toast />
     </View>
   ));
 };
@@ -180,9 +219,18 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 
-  ConEventCardWarning: {
+  ConEventCardIsActive: {
     borderWidth: 1,
     borderColor: Theme.colors.green,
+    padding: 5,
+    borderRadius: 10,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ConEventCardIsEnd: {
+    borderWidth: 1,
+    borderColor: Theme.colors.red,
     padding: 5,
     borderRadius: 10,
     width: '100%',
@@ -194,6 +242,9 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     borderRadius: 50,
+
+    borderColor: Theme.colors.primary,
+    borderWidth: 0.1,
   },
 
   ConEventInfo: {

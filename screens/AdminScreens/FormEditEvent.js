@@ -254,7 +254,13 @@ const FormEdit = () => {
                     : 'https://mz15q3zq-3000.usw3.devtunnels.ms//uploads/' +
                       event.Image,
                 }}
-                style={{ width: 90, height: 90, borderRadius: 100 }}
+                style={{
+                  width: 90,
+                  height: 90,
+                  borderRadius: 100,
+                  borderColor: Theme.colors.primary,
+                  borderWidth: 0.1,
+                }}
               />
             )}
           </View>

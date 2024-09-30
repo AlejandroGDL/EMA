@@ -241,7 +241,6 @@ class UserRepo {
     const User = await UserModel.deleteOne({ StudentID });
     return User;
   }
-
   // Obtener usuario y eventos asistidos
   static async getAssistedEvents({ StudentID }) {
     const UserModel = mongoose.model('User', UserSchema);
@@ -249,9 +248,17 @@ class UserRepo {
     const User = await UserModel.findOne({ StudentID }).populate(
       'AssistedEvents'
     );
+    if (!User) {
+      console.error('Este usuario no existe');
+      throw new Error('Este usuario no existe');
+    }
+
+    if (!User.AssistedEvents) {
+      console.error('No ha asistido a ningún evento');
+      throw new Error('No ha asistido a ningún evento');
+    }
     return User;
   }
-
   // Obtener token de push
   static async getPushToken({ StudentID, PushToken }) {
     Validation.StudentID(StudentID);
@@ -264,9 +271,8 @@ class UserRepo {
     );
     return User;
   }
-
   // Enviar notificación
-  static async sendNotification({ StudentID, Body }) {
+  static async sendNotification({ StudentID, Title, Body }) {
     const UserModel = mongoose.model('User', UserSchema);
 
     const User = await UserModel.findOne({ StudentID });
@@ -275,7 +281,7 @@ class UserRepo {
     const message = {
       to: User.ExpoPushToken,
       sound: 'default',
-      title: 'Notificación',
+      title: Title,
       body: Body,
     };
 
@@ -290,7 +296,6 @@ class UserRepo {
 
     return User;
   }
-
   //Actualizar Contraseña
   static async updatePasswordFirstTime({ StudentID, StudentPassword }) {
     //Validar el ID y la contraseña

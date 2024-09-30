@@ -25,13 +25,16 @@ const CertificateCard = () => {
   const { user } = useAuth();
 
   React.useEffect(() => {
-    Axiosconfig.get(`api/user/events/` + user.StudentID)
-      .then((res) => {
-        setEvents(res.data.AssistedEvents);
-      })
-      .catch((err) => {
+    const fetchEvents = async () => {
+      try {
+        const res = await Axiosconfig.get(`api/user/events/` + user.StudentID);
+        setEvents(res.data);
+      } catch (err) {
         console.log(err);
-      });
+      }
+    };
+
+    fetchEvents();
   }, []);
 
   Events.map((event) => {
@@ -39,8 +42,6 @@ const CertificateCard = () => {
     const hour = date[1].split(':');
     event.DateandHour = date[0];
     event.Hour = hour[0] + ':' + hour[1];
-    //Eliminar a la imagen las primeras 7 letras
-    event.Image = event.Image.slice(7);
 
     //Agregar PM o AM
     if (hour[0] > 12) {
@@ -116,7 +117,9 @@ const CertificateCard = () => {
       <View>
         <Image
           source={{
-            uri: 'https://mz15q3zq-3000.usw3.devtunnels.ms/' + event.Image,
+            uri:
+              'https://mz15q3zq-3000.usw3.devtunnels.ms//uploads/' +
+              event.Image,
           }}
           style={styles.EventImage}
         />
@@ -172,6 +175,9 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     borderRadius: 50,
+
+    borderColor: Theme.colors.primary,
+    borderWidth: 0.1,
   },
 
   ConEventInfo: {

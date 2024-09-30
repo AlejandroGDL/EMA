@@ -88,6 +88,18 @@ const registerattendance = async (req, res) => {
   }
 };
 
+//Controlador para agregar a la lista de notificaciones
+const addNotificationList = async (req, res) => {
+  const { EventID, StudentID } = req.body;
+
+  try {
+    await EventRepo.addNotificationList({ EventID, StudentID });
+    res.json('Usuario agregado a la lista de notificaciones');
+  } catch (error) {
+    res.json('Error al enviar la notificación', error.message);
+  }
+};
+
 module.exports = {
   getEvent,
   createEvent,
@@ -95,4 +107,5 @@ module.exports = {
   updateEvent,
   deleteEvent,
   registerattendance,
+  addNotificationList,
 };

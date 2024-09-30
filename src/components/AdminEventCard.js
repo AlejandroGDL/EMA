@@ -204,6 +204,9 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     borderRadius: 50,
+
+    borderColor: Theme.colors.primary,
+    borderWidth: 0.1,
   },
 
   ConEventInfo: {

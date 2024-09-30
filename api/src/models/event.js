@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const User = require('./user');
+const UserRepo = require('./user');
 const fs = require('fs');
 
 const schedule = require('node-schedule');
-const moment = require('moment-timezone');
 
 const EventSchema = new mongoose.Schema({
   Title: {
@@ -33,6 +33,16 @@ const EventSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  IsEnd: {
+    type: Boolean,
+    default: false,
+  },
+  NotificateList: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
   Assistance: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -66,7 +76,7 @@ class EventRepo {
     });
 
     //Activar el evento
-    await activateEvent(Event._id, DateandHour, EndDateHour);
+    await activateEvent(Event._id, Event.Title, DateandHour, EndDateHour);
 
     return Event;
   }
@@ -198,10 +208,68 @@ class EventRepo {
     user.AssistedEvents.push(activeEvent._id);
     await user.save();
 
+    UserRepo.sendNotification({
+      StudentID,
+      Title: '¡Felicidades! Asistencia registrada',
+      Body: `Has asistido al evento ${activeEvent.Title}`,
+    });
+
     return activeEvent;
   }
-}
+  // Agregar a la lista de notificaciones
+  static async addNotificationList({ EventID, StudentID }) {
+    const EventModel = mongoose.model('Event', EventSchema);
 
+    //Buscar el evento por ID
+    const event = await EventModel.findOne({ _id: EventID });
+    if (!event) {
+      console.error('El evento no existe');
+      throw new Error('El evento no existe');
+    }
+    //Buscar el usuario por ID
+    const user = await User.findOne({ StudentID });
+    if (!user) {
+      console.error('El usuario no existe');
+      throw new Error('El usuario no existe');
+    }
+
+    //Agregar a la lista de notificaciones
+
+    event.NotificateList.push(user._id);
+    await event.save();
+
+    return event;
+  }
+
+  // Generar certificado de asistencia
+  static async generateCertificate({ StudentID, EventID }) {
+    const EventModel = mongoose.model('Event', EventSchema);
+
+    //Buscar el evento por ID
+    const event = await EventModel.findOne({ _id: EventID });
+    if (!event) {
+      console.error('El evento no existe');
+      throw new Error('El evento no existe');
+    }
+
+    //Buscar el usuario por ID
+    const user = await User.findOne({ StudentID });
+    if (!user) {
+      console.error('El usuario no existe');
+      throw new Error('El usuario no existe');
+    }
+
+    //Validar que el usuario haya asistido al evento
+    if (!event.Assistance.includes(user._id)) {
+      console.error('El usuario no ha asistido a este evento');
+      throw new Error('El usuario no ha asistido a este evento');
+    }
+
+    //Generar certificado
+
+    return certificate;
+  }
+}
 // Solapamiento de eventos
 async function isOverlappingEvent(DateandHour, Duration) {
   const EventModel = mongoose.model('Event', EventSchema);
@@ -333,35 +401,63 @@ function renameImage(file) {
   return newFileName;
 }
 
-// Activar un evento
-async function activateEvent(EventID, DateandHour, EndDateHour) {
+// Enviar notificación
+async function sendNotification({ EventID, Title, Body }) {
   const EventModel = mongoose.model('Event', EventSchema);
 
+  // Enviar notificación a todos los usuarios en NotificateList
+  const event = await EventModel.findById(EventID).populate('NotificateList');
+
+  for (const user of event.NotificateList) {
+    await UserRepo.sendNotification({
+      StudentID: user.StudentID,
+      Title,
+      Body,
+    });
+  }
+}
+
+// Activar un evento
+async function activateEvent(EventID, EventTitle, DateandHour, EndDateHour) {
+  const EventModel = mongoose.model('Event', EventSchema);
+
+  // ================== Activar el evento ==================
+
   // Extraer la fecha y hora del evento
-  const año = DateandHour.slice(0, 4);
-  const mes = DateandHour.slice(5, 7);
-  const dia = DateandHour.slice(8, 10);
-  const hora = DateandHour.slice(11, 13);
-  const minuto = DateandHour.slice(14, 16);
+  const startYear = DateandHour.slice(0, 4);
+  const startMonth = DateandHour.slice(5, 7);
+  const startDay = DateandHour.slice(8, 10);
+  const startHour = DateandHour.slice(11, 13);
+  const startMinute = DateandHour.slice(14, 16);
 
   // Crear una tarea programada para activar el evento
-  schedule.scheduleJob(new Date(año, mes - 1, dia, hora, minuto), async () => {
-    //Buscar el evento por ID y actualizarlo
-    try {
-      const event = await EventModel.findByIdAndUpdate(
-        EventID,
-        { IsActive: true },
-        { new: true }
-      );
-      if (event) {
-        console.log(`Event ${EventID} activated successfully.`);
-      } else {
-        console.error(`Event ${EventID} not found.`);
+  schedule.scheduleJob(
+    new Date(startYear, startMonth - 1, startDay, startHour, startMinute),
+    async () => {
+      //Buscar el evento por ID y actualizarlo
+      try {
+        const event = await EventModel.findByIdAndUpdate(
+          EventID,
+          { IsActive: true },
+          { new: true }
+        );
+        if (event) {
+          sendNotification({
+            EventID,
+            Title: EventTitle,
+            Body: 'El evento ha comenzado',
+          });
+          console.log(`Event ${EventID} activated successfully.`);
+        } else {
+          console.error(`Event ${EventID} not found.`);
+        }
+      } catch (error) {
+        console.error('Error al activar el evento:', error);
       }
-    } catch (error) {
-      console.error('Error al activar el evento:', error);
     }
-  });
+  );
+
+  // ================== Desactivar el evento ==================
 
   // Extraer la fecha y hora de finalización del evento
   const endYear = EndDateHour.toISOString().slice(0, 4);
@@ -378,7 +474,7 @@ async function activateEvent(EventID, DateandHour, EndDateHour) {
       try {
         const event = await EventModel.findByIdAndUpdate(
           EventID,
-          { IsActive: false },
+          { IsActive: false, IsEnd: true },
           { new: true }
         );
         if (event) {

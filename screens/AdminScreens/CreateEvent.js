@@ -1,4 +1,4 @@
-import { StyleSheet, View, TextInput, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, TextInput, Image } from 'react-native';
 import React from 'react';
 
 //Components
@@ -9,6 +9,12 @@ import Separator from '../../src/components/Separator';
 //DatePicker and ImagePicker
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 import * as ImagePicker from 'expo-image-picker';
 
 import Theme from '../../src/styles/Theme';
@@ -44,7 +50,10 @@ const CreateEvent = () => {
     try {
       const formData = new FormData();
       formData.append('Title', name);
-      formData.append('DateandHour', dayjs(date).format('YYYY-MM-DDTHH:mm:ss'));
+      const dateInCDMX = dayjs(date)
+        .tz('America/Mexico_City', true)
+        .format('YYYY-MM-DDTHH:mm:ssZ');
+      formData.append('DateandHour', dateInCDMX);
       formData.append('Duration', duration * 60);
       formData.append('Place', place);
       if (image) {
@@ -142,7 +151,7 @@ const CreateEvent = () => {
               date={date}
               timePicker={true}
               onChange={(params) => setDate(params.date)}
-              locale={'es'}
+              locale={'mx'}
               selectedItemColor={Theme.colors.primary}
               selectedRangeBackgroundColor={Theme.colors.primary}
             />

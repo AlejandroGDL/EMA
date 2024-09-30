@@ -6,19 +6,25 @@ import MyText from './MyText';
 
 import { useAuth } from '../../hooks/AuthContext';
 
-const UserComponent = (props) => {
+import Theme from '../styles/Theme';
+
+const UserComponent = () => {
   const { user } = useAuth();
 
   return (
     <View style={styles.ConUserComponent}>
-      <Image
-        source={{ uri: user.StudentImage }}
-        style={styles.UserComponentImage}
-      />
+      <View style={styles.Avatar}>
+        <MyText
+          h1
+          bold
+          color={Theme.colors.white}
+        >
+          {user.StudentName.split(' ')[0]}
+        </MyText>
+      </View>
       <MyText
         h2
         bold
-        {...props}
       >
         {user.StudentName} {user.StudentLastName}
       </MyText>
@@ -27,6 +33,16 @@ const UserComponent = (props) => {
 };
 
 export default UserComponent;
+
+// Color Avatar random
+const getRandomColor = () => {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
 
 const styles = StyleSheet.create({
   ConUserComponent: {
@@ -39,5 +55,14 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 100,
+  },
+
+  Avatar: {
+    backgroundColor: getRandomColor(),
+    width: 150,
+    height: 150,
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

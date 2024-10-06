@@ -1,5 +1,4 @@
 import { StyleSheet, Text, View, Image, Alert } from 'react-native';
-import RNFetchBlob from 'react-native-blob-util';
 import React from 'react';
 
 import Theme from '../styles/Theme';
@@ -144,6 +143,33 @@ const CertificateCard = () => {
           responseType: 'arraybuffer',
         }
       );
+
+      const base64 = btoa(
+        new Uint8Array(response.data).reduce(
+          (data, byte) => data + String.fromCharCode(byte),
+          ''
+        )
+      );
+      const uri = FileSystem.cacheDirectory + 'Certificado.pdf';
+      await FileSystem.writeAsStringAsync(uri, base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const asset = await MediaLibrary.createAssetAsync(uri);
+      if (asset) {
+        const album = await MediaLibrary.getAlbumAsync('Download');
+        if (album == null) {
+          await MediaLibrary.createAlbumAsync('Download', asset, false);
+        } else {
+          await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+        }
+        Alert.alert(
+          'Certificado descargado',
+          'El certificado se ha descargado correctamente.'
+        );
+      } else {
+        Alert.alert('Error', 'No se pudo crear el asset del certificado.');
+      }
     } catch (err) {
       console.log(err.message);
     }

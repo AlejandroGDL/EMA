@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert } from 'react-native';
+import RNFetchBlob from 'react-native-blob-util';
 import React from 'react';
 
 import Theme from '../styles/Theme';
@@ -20,8 +21,13 @@ import Axiosconfig from '../config/Axiosconfig';
 //AuthContext
 import { useAuth } from '../../hooks/AuthContext';
 
+//Expo
+import * as FileSystem from 'expo-file-system';
+import * as MediaLibrary from 'expo-media-library';
+
 const CertificateCard = () => {
   const [Events, setEvents] = React.useState([]);
+  const [NoEvents, setNoEvents] = React.useState(false);
   const { user } = useAuth();
 
   React.useEffect(() => {
@@ -29,6 +35,21 @@ const CertificateCard = () => {
       try {
         const res = await Axiosconfig.get(`api/user/events/` + user.StudentID);
         setEvents(res.data);
+        if (res.data.length === 0) {
+          setNoEvents(true);
+
+          setEvents([
+            {
+              _id: 'NoEvents',
+              Title: 'No tienes eventos registrados',
+              DateandHour: '0000-00-00T00:00',
+              Hour: '',
+              Duration: '',
+              Place: '',
+              Image: 'NoImage.png',
+            },
+          ]);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -101,6 +122,33 @@ const CertificateCard = () => {
     }
   });
 
+  //Descargar certificado
+  const downloadCertificate = async (event) => {
+    // Solicitar permisos de almacenamiento
+    const { status } = await MediaLibrary.requestPermissionsAsync();
+    if (status !== 'granted') {
+      alert(
+        'Se requieren permisos de almacenamiento para descargar el certificado.'
+      );
+      return;
+    }
+
+    try {
+      const response = await Axiosconfig.post(
+        `/api/generatecertificate`,
+        {
+          EventID: event._id,
+          StudentID: user.StudentID,
+        },
+        {
+          responseType: 'arraybuffer',
+        }
+      );
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   return Events.map((event, id) => (
     <View
       style={styles.ConEventCard}
@@ -137,6 +185,7 @@ const CertificateCard = () => {
       <Separator />
       <View>
         <MyButton
+          Function={() => downloadCertificate(event)}
           TextProps={{
             color: Theme.colors.white,
           }}

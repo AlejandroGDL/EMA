@@ -72,21 +72,6 @@ const getAssistedEvents = async (req, res) => {
 
   try {
     const user = await UserRepo.getAssistedEvents({ StudentID });
-
-    if (!user) {
-      res.json('Usuario no encontrado');
-      return;
-    }
-
-    if (
-      !user.AssistedEvents ||
-      !Array.isArray(user.AssistedEvents) ||
-      user.AssistedEvents.length === 0
-    ) {
-      res.json('No se encontraron eventos asistidos para este usuario');
-      return;
-    }
-
     res.json(user.AssistedEvents);
   } catch (error) {
     res.json('Error al encontrar los eventos asistidos', error.message);

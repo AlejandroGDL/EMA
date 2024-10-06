@@ -32,8 +32,7 @@ const EventCard = () => {
       const Eventos = await Axiosconfig.get('api/events');
 
       if (!Eventos.data) {
-        console.error('No hay eventos');
-        return;
+        Eventos.return;
       }
 
       setEventos(Eventos.data);

@@ -25,5 +25,7 @@ router.delete('/event/:EventID', eventController.deleteEvent);
 router.post('/registerevent/:StudentID', eventController.registerattendance);
 //Registrar en la lista de notificaciones
 router.post('/registerlistnotify', eventController.addNotificationList);
+//Generar certificado
+router.post('/generatecertificate', eventController.generateCertificate);
 
 module.exports = router;

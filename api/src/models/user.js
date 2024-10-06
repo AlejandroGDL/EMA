@@ -243,21 +243,18 @@ class UserRepo {
   }
   // Obtener usuario y eventos asistidos
   static async getAssistedEvents({ StudentID }) {
-    const UserModel = mongoose.model('User', UserSchema);
+    try {
+      const UserModel = mongoose.model('User', UserSchema);
 
-    const User = await UserModel.findOne({ StudentID }).populate(
-      'AssistedEvents'
-    );
-    if (!User) {
-      console.error('Este usuario no existe');
-      throw new Error('Este usuario no existe');
-    }
+      const User = await UserModel.findOne({ StudentID }).populate(
+        'AssistedEvents'
+      );
 
-    if (!User.AssistedEvents) {
-      console.error('No ha asistido a ningún evento');
-      throw new Error('No ha asistido a ningún evento');
+      return User;
+    } catch (error) {
+      console.error(error.message);
+      throw new Error(error.message);
     }
-    return User;
   }
   // Obtener token de push
   static async getPushToken({ StudentID, PushToken }) {

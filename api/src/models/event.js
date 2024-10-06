@@ -51,6 +51,9 @@ const EventSchema = new mongoose.Schema({
   ],
 });
 
+const Event = mongoose.model('Event', EventSchema);
+module.exports.event = Event;
+
 class EventRepo {
   // Crear un evento
   static async create({ Title, DateandHour, Duration, Place, Image }) {
@@ -77,6 +80,18 @@ class EventRepo {
 
     //Activar el evento
     await activateEvent(Event._id, Event.Title, DateandHour, EndDateHour);
+
+    if (Event) {
+      // Notificar a todos los usuarios
+      const Users = await UserRepo.getAllUsers();
+      for (const user of Users) {
+        await UserRepo.sendNotification({
+          StudentID: user.StudentID,
+          Title: 'Nuevo evento',
+          Body: `Se ha creado un nuevo evento: ${Event.Title}`,
+        });
+      }
+    }
 
     return Event;
   }
@@ -239,35 +254,6 @@ class EventRepo {
     await event.save();
 
     return event;
-  }
-
-  // Generar certificado de asistencia
-  static async generateCertificate({ StudentID, EventID }) {
-    const EventModel = mongoose.model('Event', EventSchema);
-
-    //Buscar el evento por ID
-    const event = await EventModel.findOne({ _id: EventID });
-    if (!event) {
-      console.error('El evento no existe');
-      throw new Error('El evento no existe');
-    }
-
-    //Buscar el usuario por ID
-    const user = await User.findOne({ StudentID });
-    if (!user) {
-      console.error('El usuario no existe');
-      throw new Error('El usuario no existe');
-    }
-
-    //Validar que el usuario haya asistido al evento
-    if (!event.Assistance.includes(user._id)) {
-      console.error('El usuario no ha asistido a este evento');
-      throw new Error('El usuario no ha asistido a este evento');
-    }
-
-    //Generar certificado
-
-    return certificate;
   }
 }
 // Solapamiento de eventos

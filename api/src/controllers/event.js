@@ -4,6 +4,8 @@ const EventRepo = require('../models/event');
 const User = require('../models/user');
 const PDFDocument = require('pdfkit');
 const { Buffer } = require('buffer');
+const fs = require('fs');
+const path = require('path');
 
 //Controlador para obtener un evento
 const getEvent = async (req, res) => {
@@ -350,10 +352,30 @@ const generateCertificate = async (req, res) => {
         align: 'right',
       });
 
+    // Guardar el certificado
+    const pdfPath = path.join(
+      __dirname,
+      '../../public/PDF',
+      `certificado_${event.Title}_${user.StudentName}.pdf`
+    );
+
+    if (fs.existsSync(pdfPath)) {
+      fs.unlinkSync(pdfPath);
+    }
+
+    const writeStream = fs.createWriteStream(pdfPath);
+
+    certificate.pipe(writeStream);
+
+    writeStream.on('error', (error) => {
+      res.status(500).json({
+        message: 'Error al guardar el certificado',
+        error: error.message,
+      });
+    });
+
     // Finalizar el PDF
     certificate.end();
-
-    console.log(certificate);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

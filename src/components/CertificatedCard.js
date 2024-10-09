@@ -24,10 +24,15 @@ import { useAuth } from '../../hooks/AuthContext';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 
+//Navegación
+import { useNavigation } from '@react-navigation/native';
+
 const CertificateCard = () => {
   const [Events, setEvents] = React.useState([]);
   const [NoEvents, setNoEvents] = React.useState(false);
   const { user } = useAuth();
+
+  const nav = useNavigation();
 
   React.useEffect(() => {
     const fetchEvents = async () => {
@@ -140,35 +145,15 @@ const CertificateCard = () => {
           StudentID: user.StudentID,
         },
         {
-          responseType: 'arraybuffer',
+          responseType: 'blob',
         }
       );
 
-      const base64 = btoa(
-        new Uint8Array(response.data).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ''
-        )
-      );
-      const uri = FileSystem.cacheDirectory + 'Certificado.pdf';
-      await FileSystem.writeAsStringAsync(uri, base64, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      const asset = await MediaLibrary.createAssetAsync(uri);
-      if (asset) {
-        const album = await MediaLibrary.getAlbumAsync('Download');
-        if (album == null) {
-          await MediaLibrary.createAlbumAsync('Download', asset, false);
-        } else {
-          await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-        }
-        Alert.alert(
-          'Certificado descargado',
-          'El certificado se ha descargado correctamente.'
-        );
-      } else {
-        Alert.alert('Error', 'No se pudo crear el asset del certificado.');
+      if (response.status === 200) {
+        nav.navigate('PDFWebView', {
+          EventTitle: event.Title,
+          StudentName: user.StudentName,
+        });
       }
     } catch (err) {
       console.log(err.message);

@@ -149,7 +149,7 @@ const Menu = ({ navigation }) => {
 
 async function registerForPushNotificationsAsync() {
   let token;
-  const projectId = '7b240c19-37d8-48fa-8f31-8bc857da091d'; // Coloca tu projectId aquí
+  const projectId = '7b240c19-37d8-48fa-8f31-8bc857da091d'; // Expo Project ID
 
   if (Device.isDevice) {
     const { status: existingStatus } =

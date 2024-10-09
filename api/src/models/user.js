@@ -21,10 +21,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  StudentImage: {
-    type: String,
-    required: true,
-  },
   StudentCareer: {
     type: String,
     required: true,
@@ -67,7 +63,6 @@ class UserRepo {
     StudentLastName,
     StudentID,
     StudentPassword,
-    StudentImage,
     StudentCareer,
     StudentSemester,
     StudentHours,
@@ -89,10 +84,6 @@ class UserRepo {
     if (!StudentPassword) {
       console.error('La contraseña es requerida');
       throw new Error('La contraseña es requerida');
-    }
-    if (!StudentImage) {
-      console.error('La imagen es requerida');
-      throw new Error('La imagen es requerida');
     }
     if (!StudentSemester) {
       console.error('El semestre es requerido');
@@ -118,15 +109,14 @@ class UserRepo {
     if (
       typeof StudentName !== 'string' ||
       typeof StudentLastName !== 'string' ||
-      typeof StudentImage !== 'string' ||
       typeof StudentPassword !== 'string' ||
       typeof StudentCareer !== 'string'
     ) {
       console.error(
-        'El Nombre, Apellidos, Imagen y Contraseña deben ser de tipo string'
+        'El Nombre, Apellidos y Contraseña deben ser de tipo string'
       );
       throw new Error(
-        'El Nombre, Apellidos, Imagen y Contraseña deben ser de tipo string'
+        'El Nombre, Apellidos y Contraseña deben ser de tipo string'
       );
     }
 
@@ -139,7 +129,6 @@ class UserRepo {
       StudentLastName,
       StudentID,
       StudentPassword: hashedPassword,
-      StudentImage,
       StudentCareer,
       StudentSemester,
       StudentHours,
@@ -189,7 +178,7 @@ class UserRepo {
       StudentName: User.StudentName,
       StudentLastName: User.StudentLastName,
       StudentID: User.StudentID,
-      StudentImage: User.StudentImage,
+      IsPasswordChanged: User.IsPasswordChanged,
       StudentCareer: User.StudentCareer,
       StudentSemester: User.StudentSemester,
       StudentHours: User.StudentHours,
@@ -203,7 +192,6 @@ class UserRepo {
     StudentName,
     StudentLastName,
     StudentPassword,
-    StudentImage,
     StudentCareer,
     StudentSemester,
     StudentHours,
@@ -221,7 +209,6 @@ class UserRepo {
             StudentName,
             StudentLastName,
             StudentPassword: hashedPassword,
-            StudentImage,
             StudentCareer,
             StudentSemester,
             StudentHours,
@@ -294,10 +281,15 @@ class UserRepo {
     return User;
   }
   //Actualizar Contraseña
-  static async updatePasswordFirstTime({ StudentID, StudentPassword }) {
+  static async updatePassword({
+    StudentID,
+    StudentPassword,
+    StudentNewPassword,
+  }) {
     //Validar el ID y la contraseña
     Validation.StudentID(StudentID);
     Validation.StudentPassword(StudentPassword);
+    Validation.StudentPassword(StudentNewPassword);
 
     //Modelo de usuario
     const UserModel = mongoose.model('User', UserSchema);
@@ -313,16 +305,40 @@ class UserRepo {
 
     // Si la contraseña es igual a la anterior, lanzar un error
     if (isPasswordValid) {
-      throw new Error('La nueva contraseña no puede ser igual a la anterior');
+      //Hashear la nueva contraseña
+      const hashedPassword = await bcrypt.hash(StudentNewPassword, 1);
+
+      //Actualizar la contraseña
+      const UpdatedUser = await UserModel.findOneAndUpdate(
+        { StudentID },
+        { StudentPassword: hashedPassword, IsPasswordChanged: true },
+        { new: true }
+      );
+
+      return UpdatedUser;
+    } else {
+      throw new Error('La contraseña es incorrecta');
     }
+  }
+  //Actualizar Contraseña por un administrador
+  static async updatePasswordbyAdmin({ StudentID, StudentNewPassword }) {
+    //Validar el ID y la contraseña
+    Validation.StudentID(StudentID);
+    Validation.StudentPassword(StudentNewPassword);
+
+    //Modelo de usuario
+    const UserModel = mongoose.model('User', UserSchema);
+
+    //Buscar el usuario
+    const User = await UserModel.findOne({ StudentID });
 
     //Hashear la nueva contraseña
-    const hashedPassword = await bcrypt.hash(StudentPassword, 1);
+    const hashedPassword = await bcrypt.hash(StudentNewPassword, 1);
 
-    //Actualizar la contraseña y cambiar el estado de IsPasswordChanged a true
+    //Actualizar la contraseña
     const UpdatedUser = await UserModel.findOneAndUpdate(
       { StudentID },
-      { StudentPassword: hashedPassword, IsPasswordChanged: true },
+      { StudentPassword: hashedPassword, IsPasswordChanged: false },
       { new: true }
     );
 
@@ -335,10 +351,6 @@ class Validation {
     if (!StudentID) {
       console.error('El ID es requerido');
       throw new Error('El ID es requerido');
-    }
-    if (typeof StudentID !== 'number') {
-      console.error('El ID debe ser un número');
-      throw new Error('El ID debe ser un número');
     }
   }
 

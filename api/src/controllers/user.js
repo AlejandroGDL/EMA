@@ -1,4 +1,3 @@
-const { get } = require('mongoose');
 const UserRepo = require('../models/user');
 
 //Controlador para crear un usuario
@@ -8,7 +7,6 @@ const createUser = async (req, res) => {
     StudentLastName,
     StudentID,
     StudentPassword,
-    StudentImage,
     StudentCareer,
     StudentSemester,
     StudentHours,
@@ -22,7 +20,6 @@ const createUser = async (req, res) => {
       StudentLastName,
       StudentID,
       StudentPassword,
-      StudentImage,
       StudentCareer,
       StudentSemester,
       StudentHours,
@@ -105,17 +102,37 @@ const sendNotification = async (req, res) => {
   }
 };
 
-const changePasswordFirstTime = async (req, res) => {
-  const { StudentID, StudentPassword } = req.body;
+//Cambiar contraseña
+const changePassword = async (req, res) => {
+  const { StudentID, StudentPassword, StudentNewPassword } = req.body;
 
   try {
-    const user = await UserRepo.updatePasswordFirstTime({
+    const user = await UserRepo.updatePassword({
       StudentID,
       StudentPassword,
+      StudentNewPassword,
     });
     res.json(user);
   } catch (error) {
     res.json({
+      message: 'Error al actualizar la contraseña',
+      error: error.message,
+    });
+  }
+};
+
+//Actulizar contraseña por un administrador
+const changePasswordbyAdmin = async (req, res) => {
+  const { StudentID, StudentNewPassword } = req.body;
+
+  try {
+    const user = await UserRepo.updatePasswordbyAdmin({
+      StudentID,
+      StudentNewPassword,
+    });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({
       message: 'Error al actualizar la contraseña',
       error: error.message,
     });
@@ -129,5 +146,6 @@ module.exports = {
   getAssistedEvents,
   getPushToken,
   sendNotification,
-  changePasswordFirstTime,
+  changePassword,
+  changePasswordbyAdmin,
 };

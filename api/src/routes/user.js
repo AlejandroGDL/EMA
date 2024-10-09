@@ -14,7 +14,12 @@ router.get('/user/events/:StudentID', userController.getAssistedEvents);
 router.post('/user/pushToken', userController.getPushToken);
 //Enviar notificación
 router.post('/user/sendNotification', userController.sendNotification);
-//Actualizar contraseña usuario (si es la primera vez)
-router.post('/user/isChangedPassword', userController.changePasswordFirstTime);
+//Actualizar contraseña usuario
+router.post('/user/changePassword', userController.changePassword);
+//Actualizar contraseña por un administrador
+router.post(
+  '/user/changePasswordbyAdmin',
+  userController.changePasswordbyAdmin
+);
 
 module.exports = router;

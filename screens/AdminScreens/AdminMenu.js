@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React from 'react';
 
 //Components
@@ -35,6 +35,16 @@ const AdminMenu = ({ navigation }) => {
           }}
         >
           Editar o Eliminar un Evento
+        </MyButton>
+        <MyButton
+          Icon={EditEvent}
+          IconProps={{ color: Theme.colors.white, width: 30, height: 30 }}
+          TextProps={{ color: Theme.colors.white, bold: true, h3: true }}
+          Function={() => {
+            navigation.navigate('ChangePasswordbyAdmin');
+          }}
+        >
+          Restablecer Contraseña
         </MyButton>
       </View>
     </View>

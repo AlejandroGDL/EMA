@@ -11,7 +11,10 @@ import Theme from '../src/styles/Theme';
 //Hooks
 import { useAuth } from '../hooks/AuthContext';
 
+import { useNavigation } from '@react-navigation/native';
+
 const Settings = () => {
+  const nav = useNavigation();
   const { signOut } = useAuth();
 
   return (
@@ -27,7 +30,12 @@ const Settings = () => {
         <UserComponent color={Theme.colors.white} />
       </View>
       <View style={styles.SettingsContainerButtons}>
-        <MyButton TextProps={{ color: Theme.colors.white, bold: true }}>
+        <MyButton
+          Function={() => {
+            nav.navigate('ChangePassword');
+          }}
+          TextProps={{ color: Theme.colors.white, bold: true }}
+        >
           Actualizar Constraseña
         </MyButton>
         <MyButton

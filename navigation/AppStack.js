@@ -14,11 +14,16 @@ import SettingsScreen from '../screens/Settings';
 import EventsScreen from '../screens/Events';
 import CertificatesScreen from '../screens/Certificates';
 
+//PDF View
+import PDFWebView from '../src/components/PDFWebView';
+import ChangePassword from '../screens/ChangePassword';
+
 //Admin Screens
 import AdminScreen from '../screens/AdminScreens/AdminMenu';
 import CreateEvent from '../screens/AdminScreens/CreateEvent';
 import EditEvent from '../screens/AdminScreens/EditEvent';
 import FormEdit from '../screens/AdminScreens/FormEditEvent';
+import ChangePasswordbyAdmin from '../screens/AdminScreens/ChangePasswordbyAdmin';
 
 //Icons
 import Settings from '../src/icons/Settings';
@@ -47,7 +52,11 @@ const AppStack = () => {
   if (user.IsAdmin == true) {
     ruta = 'Admin';
   } else {
-    ruta = 'Menu';
+    if (user.IsPasswordChanged == false) {
+      ruta = 'ChangePassword';
+    } else {
+      ruta = 'Menu';
+    }
   }
 
   return (
@@ -64,6 +73,7 @@ const AppStack = () => {
           },
           headerTintColor: Theme.colors.white,
           headerRight: () => <SettingButton />,
+          headerLeft: () => <></>,
         }}
       />
       <Stack.Screen
@@ -104,6 +114,33 @@ const AppStack = () => {
         }}
         name='Certificates'
         component={CertificatesScreen}
+      />
+      <Stack.Screen
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
+        name='ChangePassword'
+        component={ChangePassword}
+      />
+      {/*  PDF Web View */}
+      <Stack.Screen
+        name='PDFWebView'
+        component={PDFWebView}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
       />
       {/* ========== Admin Screens ========== */}
       <Stack.Screen
@@ -159,10 +196,21 @@ const AppStack = () => {
           headerTintColor: Theme.colors.white,
         }}
       />
+      <Stack.Screen
+        name='ChangePasswordbyAdmin'
+        component={ChangePasswordbyAdmin}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
+      />
     </Stack.Navigator>
   );
 };
 
 export default AppStack;
-
-const styles = StyleSheet.create({});

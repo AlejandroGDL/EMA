@@ -13,6 +13,7 @@ import Menu from '../screens/Menu';
 import SettingsScreen from '../screens/Settings';
 import EventsScreen from '../screens/Events';
 import CertificatesScreen from '../screens/Certificates';
+import QR from '../screens/QR';
 
 //PDF View
 import PDFWebView from '../src/components/PDFWebView';
@@ -24,6 +25,10 @@ import CreateEvent from '../screens/AdminScreens/CreateEvent';
 import EditEvent from '../screens/AdminScreens/EditEvent';
 import FormEdit from '../screens/AdminScreens/FormEditEvent';
 import ChangePasswordbyAdmin from '../screens/AdminScreens/ChangePasswordbyAdmin';
+import RegisterUser from '../screens/AdminScreens/RegisterUser';
+import RegisterUserQR from '../screens/AdminScreens/RegisterUserQR';
+
+import RegisterByQR from '../screens/AdminScreens/RegisterByQR';
 
 //Icons
 import Settings from '../src/icons/Settings';
@@ -90,19 +95,8 @@ const AppStack = () => {
         }}
       />
       <Stack.Screen
-        options={{
-          title: '',
-          titleVisible: false,
-          headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: Theme.colors.primary,
-          },
-          headerTintColor: Theme.colors.white,
-        }}
         name='Events'
         component={EventsScreen}
-      />
-      <Stack.Screen
         options={{
           title: '',
           titleVisible: false,
@@ -112,10 +106,10 @@ const AppStack = () => {
           },
           headerTintColor: Theme.colors.white,
         }}
+      />
+      <Stack.Screen
         name='Certificates'
         component={CertificatesScreen}
-      />
-      <Stack.Screen
         options={{
           title: '',
           titleVisible: false,
@@ -125,8 +119,58 @@ const AppStack = () => {
           },
           headerTintColor: Theme.colors.white,
         }}
+      />
+      <Stack.Screen
         name='ChangePassword'
         component={ChangePassword}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
+      />
+      <Stack.Screen
+        name='RegisterUser'
+        component={RegisterUser}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
+      />
+      <Stack.Screen
+        name='QR'
+        component={QR}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
+      />
+      <Stack.Screen
+        name='RegisterByQR'
+        component={RegisterByQR}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
       />
       {/*  PDF Web View */}
       <Stack.Screen
@@ -199,6 +243,19 @@ const AppStack = () => {
       <Stack.Screen
         name='ChangePasswordbyAdmin'
         component={ChangePasswordbyAdmin}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
+      />
+      <Stack.Screen
+        name='RegisterUserQR'
+        component={RegisterUserQR}
         options={{
           title: '',
           titleVisible: false,

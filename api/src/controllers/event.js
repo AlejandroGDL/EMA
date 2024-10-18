@@ -381,6 +381,21 @@ const generateCertificate = async (req, res) => {
   }
 };
 
+// Realizar el registro de asistencia por QR
+const registerattendancebyqr = async (req, res) => {
+  const { EventID, StudentID } = req.body;
+
+  try {
+    const data = await EventRepo.registerattendancebyqr({ StudentID, EventID });
+    res.status(200).json('Asistencia registrada');
+  } catch (error) {
+    res.status(400).json({
+      message: 'Error al actualizar la contraseña',
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getEvent,
   createEvent,
@@ -390,4 +405,5 @@ module.exports = {
   registerattendance,
   addNotificationList,
   generateCertificate,
+  registerattendancebyqr,
 };

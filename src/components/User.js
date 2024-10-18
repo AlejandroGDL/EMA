@@ -8,7 +8,7 @@ import { useAuth } from '../../hooks/AuthContext';
 
 import Theme from '../styles/Theme';
 
-const UserComponent = () => {
+const UserComponent = (props) => {
   const { user } = useAuth();
 
   return (
@@ -25,6 +25,7 @@ const UserComponent = () => {
       <MyText
         h2
         bold
+        color={props.color}
       >
         {user.StudentName} {user.StudentLastName}
       </MyText>

@@ -23,22 +23,31 @@ import { useAuth } from '../../hooks/AuthContext';
 // Notificaciones
 import Toast from 'react-native-toast-message';
 
+import { useNavigation } from '@react-navigation/native';
+
 const EventCard = () => {
   const [Eventos, setEventos] = React.useState([]);
   const { user } = useAuth();
 
+  const nav = useNavigation();
+
   const getEvents = async () => {
     try {
       const Eventos = await Axiosconfig.get('api/events');
-
       if (!Eventos.data) {
+        Toast.show({
+          type: 'error',
+          text1: 'No se encontraron eventos',
+        });
+
         Eventos.return;
       }
-
       setEventos(Eventos.data);
     } catch (error) {
-      console.error('Error during get-events:', {
-        response: error,
+      Toast.show({
+        type: 'error',
+        text1: 'Error al cargar los eventos',
+        text2: response.data.message,
       });
     }
   };
@@ -110,6 +119,10 @@ const EventCard = () => {
       event.Duration = event.Duration / 60 + ' Horas';
     }
   });
+
+  const GenerarQR = async (event) => {
+    nav.navigate('QR', { event });
+  };
 
   const AgregarListaNotificacion = async (event) => {
     try {
@@ -186,6 +199,16 @@ const EventCard = () => {
               }}
             >
               ¡Estaré allí, Notifícame!
+            </MyButton>
+            <MyButton
+              Function={() => {
+                GenerarQR(event);
+              }}
+              TextProps={{
+                color: Theme.colors.white,
+              }}
+            >
+              Generar QR para Asistencia
             </MyButton>
           </View>
         </>

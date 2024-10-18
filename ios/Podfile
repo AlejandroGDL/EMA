@@ -47,6 +47,8 @@ target 'EMA' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/..",
     :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
+    #permissions_path = '../node_modules/react-native-permissions/ios'
+    #pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
   )
 
   post_install do |installer|

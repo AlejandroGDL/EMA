@@ -255,6 +255,45 @@ class EventRepo {
 
     return event;
   }
+
+  //Registrar asistencia a un evento por QR
+  static async registerattendancebyqr({ EventID, StudentID }) {
+    //Buscar el evento por ID
+    const event = await Event.findOne({ _id: EventID });
+    if (!event) {
+      console.error('El evento no existe');
+      throw new Error('El evento no existe');
+    }
+
+    //Buscar el usuario por ID
+    const user = await User.findOne({ StudentID });
+    if (!user) {
+      console.error('El usuario no existe');
+      throw new Error('El usuario no existe');
+    }
+
+    //Validar que el usuario no haya asistido previamente
+    if (event.Assistance.includes(user._id)) {
+      console.error('El usuario ya asistió a este evento');
+      throw new Error('El usuario ya asistió a este evento');
+    }
+
+    //Registrar asistencia
+    event.Assistance.push(user._id);
+    await event.save();
+
+    user.StudentHours += event.Duration;
+    user.AssistedEvents.push(event._id);
+    await user.save();
+
+    UserRepo.sendNotification({
+      StudentID,
+      Title: '¡Felicidades! Asistencia registrada',
+      Body: `Has asistido al evento ${event.Title}`,
+    });
+
+    return event;
+  }
 }
 // Solapamiento de eventos
 async function isOverlappingEvent(DateandHour, Duration) {

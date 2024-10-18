@@ -23,6 +23,10 @@ router.put(
 router.delete('/event/:EventID', eventController.deleteEvent);
 //Registrar asistencia a un evento
 router.post('/registerevent/:StudentID', eventController.registerattendance);
+
+//Registrar asistencia a un evento por QR
+router.post('/registereventbyqr', eventController.registerattendancebyqr);
+
 //Registrar en la lista de notificaciones
 router.post('/registerlistnotify', eventController.addNotificationList);
 //Generar certificado

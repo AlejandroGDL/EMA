@@ -1,4 +1,4 @@
-import { StyleSheet, View, TextInput } from 'react-native';
+import { StyleSheet, View, TextInput, Pressable } from 'react-native';
 import React from 'react';
 
 //Componentes personalizados
@@ -62,9 +62,11 @@ const Login = ({ navigation }) => {
           </View>
         </View>
         <View>
-          <MyText color={Theme.colors.secundary_black}>
-            Olvide mi contraseña
-          </MyText>
+          <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
+            <MyText color={Theme.colors.secundary_black}>
+              Olvide mi contraseña
+            </MyText>
+          </Pressable>
         </View>
         <View>
           <MyButton

@@ -344,6 +344,13 @@ class UserRepo {
 
     return UpdatedUser;
   }
+  //Obtener todos los usuarios
+  static async getAllUsers() {
+    const UserModel = mongoose.model('User', UserSchema);
+
+    const Users = await UserModel.find().select('-StudentPassword');
+    return Users;
+  }
 }
 
 class Validation {

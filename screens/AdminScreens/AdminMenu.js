@@ -41,6 +41,36 @@ const AdminMenu = ({ navigation }) => {
           IconProps={{ color: Theme.colors.white, width: 30, height: 30 }}
           TextProps={{ color: Theme.colors.white, bold: true, h3: true }}
           Function={() => {
+            navigation.navigate('RegisterUser');
+          }}
+        >
+          Registrar Asistencia
+        </MyButton>
+        <MyButton
+          Icon={EditEvent}
+          IconProps={{ color: Theme.colors.white, width: 30, height: 30 }}
+          TextProps={{ color: Theme.colors.white, bold: true, h3: true }}
+          Function={() => {
+            navigation.navigate('RegisterUserQR');
+          }}
+        >
+          QR 1
+        </MyButton>
+        <MyButton
+          Icon={EditEvent}
+          IconProps={{ color: Theme.colors.white, width: 30, height: 30 }}
+          TextProps={{ color: Theme.colors.white, bold: true, h3: true }}
+          Function={() => {
+            navigation.navigate('RegisterByQR');
+          }}
+        >
+          QR 2
+        </MyButton>
+        <MyButton
+          Icon={EditEvent}
+          IconProps={{ color: Theme.colors.white, width: 30, height: 30 }}
+          TextProps={{ color: Theme.colors.white, bold: true, h3: true }}
+          Function={() => {
             navigation.navigate('ChangePasswordbyAdmin');
           }}
         >

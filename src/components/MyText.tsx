@@ -17,6 +17,7 @@ type TextProps = {
   bold?: any;
   medium?: any;
   regular?: any;
+  extraprops?: any;
 };
 
 // Styles por defecto Text
@@ -74,6 +75,7 @@ const MyText = (props: TextProps) => {
     props.medium && styles.medium,
     props.regular && styles.regular,
     props.color && { color: props.color },
+    props.extraprops,
   ];
 
   return (

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args));
+const saltRounds = parseInt(process.env.SALT_ROUNDS);
 
 const UserSchema = new mongoose.Schema({
   StudentName: {
@@ -120,7 +121,7 @@ class UserRepo {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(StudentPassword, 1);
+    const hashedPassword = await bcrypt.hash(StudentPassword, saltRounds);
 
     const UserModel = mongoose.model('User', UserSchema);
 
@@ -202,21 +203,23 @@ class UserRepo {
 
     const User =
       StudentPassword &&
-      (await bcrypt.hash(StudentPassword, 1)).then((hashedPassword) => {
-        return UserModel.findByIdAndUpdate(
-          { StudentID },
-          {
-            StudentName,
-            StudentLastName,
-            StudentPassword: hashedPassword,
-            StudentCareer,
-            StudentSemester,
-            StudentHours,
-            IsAdmin,
-          },
-          { new: true }
-        );
-      });
+      (await bcrypt.hash(StudentPassword, saltRounds)).then(
+        (hashedPassword) => {
+          return UserModel.findByIdAndUpdate(
+            { StudentID },
+            {
+              StudentName,
+              StudentLastName,
+              StudentPassword: hashedPassword,
+              StudentCareer,
+              StudentSemester,
+              StudentHours,
+              IsAdmin,
+            },
+            { new: true }
+          );
+        }
+      );
 
     return User;
   }
@@ -306,7 +309,7 @@ class UserRepo {
     // Si la contraseña es igual a la anterior, lanzar un error
     if (isPasswordValid) {
       //Hashear la nueva contraseña
-      const hashedPassword = await bcrypt.hash(StudentNewPassword, 1);
+      const hashedPassword = await bcrypt.hash(StudentNewPassword, saltRounds);
 
       //Actualizar la contraseña
       const UpdatedUser = await UserModel.findOneAndUpdate(
@@ -333,7 +336,7 @@ class UserRepo {
     const User = await UserModel.findOne({ StudentID });
 
     //Hashear la nueva contraseña
-    const hashedPassword = await bcrypt.hash(StudentNewPassword, 1);
+    const hashedPassword = await bcrypt.hash(StudentNewPassword, saltRounds);
 
     //Actualizar la contraseña
     const UpdatedUser = await UserModel.findOneAndUpdate(

@@ -1,6 +1,9 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+//Components
+import MyText from '../../src/components/MyText';
 
 //Axios Config
 import Axiosconfig from '../../src/config/Axiosconfig';
@@ -24,29 +27,42 @@ const RegisterByQR = () => {
     return (
       <View style={styles.container}>
         <Text style={styles.message}>
-          We need your permission to show the camera
+          Se necesita permiso para acceder a la cámara
         </Text>
         <Button
           onPress={requestPermission}
-          title='grant permission'
+          title='Permitir acceso a la cámara'
         />
       </View>
     );
   }
-  //Timer para volver a escanear
-  const timer = setTimeout(() => {
-    setCameraActive(false);
-  }, 3000); // 30 segundos
+
+  const CameraTimeout = () => {
+    Toast.show({
+      type: 'info',
+      text1: 'Subiendo...',
+      visibilityTime: 1000,
+    });
+    //setCameraActive(true);
+    setScanned(true);
+    const timer = setTimeout(() => {
+      setScanned(false);
+      //setCameraActive(true);
+    }, 2000);
+    return () => clearTimeout(timer);
+  };
 
   // Funcion para escanear el codigo QR
   function handleBarCodeScanned({ data }) {
+    CameraTimeout();
+
     try {
       data = JSON.parse(data);
       const response = Axiosconfig.post('api/registereventbyqr', {
         EventID: data.EventID,
         StudentID: data.StudentID,
       });
-
+      console.log(response.data);
       if (response.status === 200) {
         alert('Asistencia registrada');
         Toast.show({
@@ -56,17 +72,18 @@ const RegisterByQR = () => {
         console.log(response.data);
         setScanned(true);
         clearTimeout(timer);
-        setCameraActive(true);
-      }
-      if (response.status !== 200) {
+      } else {
         Toast.show({
           type: 'error',
-          text1: response.data.message,
+          text1: 'Error al registrar la asistencia',
         });
-        //alert('Asistencia no registrada');
-        console.log(response.data.message);
       }
-    } catch (error) {}
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error al registrar la asistencia',
+      });
+    }
   }
 
   // Encender flash
@@ -76,24 +93,30 @@ const RegisterByQR = () => {
 
   return (
     <View style={styles.container}>
-      <CameraView
-        style={styles.camera}
-        enableTorch={turnflash}
-        onBarcodeScanned={handleBarCodeScanned}
-        barcodeScannerSettings={{
-          barcodeTypes: ['qr'],
-        }}
-      >
-        <View style={styles.buttonContainer}>
-          {/* Encender Flash */}
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => enableTorch()}
-          >
-            <Text style={styles.text}>Flash</Text>
-          </TouchableOpacity>
+      {cameraActive ? (
+        <CameraView
+          style={styles.camera}
+          enableTorch={turnflash}
+          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          barcodeScannerSettings={{
+            barcodeTypes: ['qr'],
+          }}
+        >
+          <View style={styles.buttonContainer}>
+            {/* Encender Flash */}
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => enableTorch()}
+            >
+              <Text style={styles.text}>Flash</Text>
+            </TouchableOpacity>
+          </View>
+        </CameraView>
+      ) : (
+        <View>
+          <MyText>Subiendo...</MyText>
         </View>
-      </CameraView>
+      )}
       <Toast />
     </View>
   );

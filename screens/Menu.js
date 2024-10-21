@@ -89,7 +89,7 @@ const Menu = ({ navigation }) => {
   return (
     <View style={styles.IndexContainer}>
       <UserComponent />
-      <View>
+      <View style={styles.IndexConInfoCard}>
         <InfoCard
           Title={'Carrera:'}
           Info={user.StudentCareer}
@@ -193,5 +193,9 @@ const styles = StyleSheet.create({
   ConIndexButtons: {
     display: 'flex',
     gap: 20,
+  },
+  IndexConInfoCard: {
+    display: 'flex',
+    width: '90%',
   },
 });

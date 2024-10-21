@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "EMA",
-    "slug": "itpa-ema",
+    "name": "ITPA:EMA",
+    "slug": "itpaema",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -27,9 +27,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "7b240c19-37d8-48fa-8f31-8bc857da091d"
+        "projectId": "5b0a0ecd-7ad9-478c-bb29-f948412c9ad0"
       }
     },
-    "owner": "andr0"
+    "owner": "itpa_ema"
   }
 }

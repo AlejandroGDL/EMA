@@ -26,6 +26,7 @@ const UserComponent = (props) => {
         h2
         bold
         color={props.color}
+        extraprops={{ textAlign: 'center' }}
       >
         {user.StudentName} {user.StudentLastName}
       </MyText>

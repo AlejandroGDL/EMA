@@ -4,7 +4,7 @@
     "slug": "itpaema",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.adro.EMA"
+      "bundleIdentifier": "com.andro.EMA"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,9 +21,6 @@
         "backgroundColor": "#ffffff"
       },
       "package": "con.Andro.ITPA_EMA"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {

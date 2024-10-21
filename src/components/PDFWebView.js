@@ -14,7 +14,7 @@ const PDFVWebView = () => {
   const { EventTitle, StudentName } = route.params;
 
   const pdfUrl =
-    'https://mz15q3zq-3000.usw3.devtunnels.ms//PDF/certificado_' +
+    'https://emabackend.onrender.com//PDF/certificado_' +
     EventTitle +
     '_' +
     StudentName +
@@ -59,7 +59,7 @@ const PDFVWebView = () => {
           userAgent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
           source={{
             uri:
-              'https://mz15q3zq-3000.usw3.devtunnels.ms//PDF/certificado_' +
+              'https://emabackend.onrender.com//PDF/certificado_' +
               EventTitle +
               '_' +
               StudentName +

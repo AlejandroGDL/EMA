@@ -169,9 +169,7 @@ const EventCard = () => {
       <View>
         <Image
           source={{
-            uri:
-              'https://mz15q3zq-3000.usw3.devtunnels.ms//uploads/' +
-              event.Image,
+            uri: 'https://emabackend.onrender.com//uploads/' + event.Image,
           }}
           style={styles.EventImage}
         />

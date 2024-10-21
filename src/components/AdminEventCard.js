@@ -18,6 +18,8 @@ import Place from '../icons/Place';
 //Configuración de Axios
 import Axiosconfig from '../config/Axiosconfig';
 
+import API_URL from '../config/Url';
+
 const AdminEventCard = () => {
   const nav = useNavigation();
   const [Eventos, setEventos] = React.useState([]);
@@ -137,7 +139,7 @@ const AdminEventCard = () => {
       <View>
         <Image
           source={{
-            uri: 'https://emabackend.onrender.com//uploads/' + event.Image,
+            uri: API_URL + '/uploads/' + event.Image,
           }}
           style={styles.EventImage}
         />

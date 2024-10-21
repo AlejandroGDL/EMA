@@ -8,17 +8,15 @@ import Theme from '../styles/Theme';
 //Componentes
 import MyText from './MyText';
 
+import API_URL from '../config/Url';
+
 const PDFVWebView = () => {
   const nav = useNavigation();
   const route = useRoute();
   const { EventTitle, StudentName } = route.params;
 
   const pdfUrl =
-    'https://emabackend.onrender.com//PDF/certificado_' +
-    EventTitle +
-    '_' +
-    StudentName +
-    '.pdf';
+    API_URL + '/PDF/certificado_' + EventTitle + '_' + StudentName + '.pdf';
 
   //Función para abrir el PDF en el navegador
   const openInBrowser = () => {
@@ -59,7 +57,8 @@ const PDFVWebView = () => {
           userAgent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
           source={{
             uri:
-              'https://emabackend.onrender.com//PDF/certificado_' +
+              API_URL +
+              '/PDF/certificado_' +
               EventTitle +
               '_' +
               StudentName +

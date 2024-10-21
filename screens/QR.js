@@ -19,6 +19,9 @@ import Place from '../src/icons/Place';
 
 import Separator from '../src/components/Separator';
 
+//API URL
+import API_URL from '../src/config/Url';
+
 const QR = () => {
   const { user } = useAuth();
 
@@ -59,7 +62,7 @@ const QR = () => {
           <View>
             <Image
               source={{
-                uri: 'https://emabackend.onrender.com//uploads/' + event.Image,
+                uri: API_URL + '/uploads/' + event.Image,
               }}
               style={styles.EventImage}
             />

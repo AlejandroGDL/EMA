@@ -23,6 +23,9 @@ import Theme from '../../src/styles/Theme';
 import Axiosconfig from '../../src/config/Axiosconfig';
 import Toast from 'react-native-toast-message';
 
+//API URL
+import API_URL from '../../src/config/Url';
+
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 const FormEdit = () => {
@@ -251,7 +254,7 @@ const FormEdit = () => {
                 source={{
                   uri: changeImage
                     ? image
-                    : 'https://emabackend.onrender.com//uploads/' + event.Image,
+                    : API_URL + '/uploads/' + event.Image,
                 }}
                 style={{
                   width: 90,

@@ -16,6 +16,7 @@ import Place from '../icons/Place';
 
 //Configuración de Axios
 import Axiosconfig from '../config/Axiosconfig';
+import API_URL from '../config/Url';
 
 //AuthContext
 import { useAuth } from '../../hooks/AuthContext';
@@ -176,7 +177,7 @@ const CertificateCard = () => {
       <View>
         <Image
           source={{
-            uri: 'https://emabackend.onrender.com//uploads/' + event.Image,
+            uri: API_URL + '/uploads/' + event.Image,
           }}
           style={styles.EventImage}
         />

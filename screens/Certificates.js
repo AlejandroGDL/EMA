@@ -8,9 +8,15 @@ import Theme from '../src/styles/Theme';
 import MyText from '../src/components/MyText';
 import CertificateCard from '../src/components/CertificatedCard';
 
+import { StatusBar } from 'expo-status-bar';
+
 const Certificates = () => {
   return (
     <View style={styles.ConCerticates}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <MyText
         h1
         bold

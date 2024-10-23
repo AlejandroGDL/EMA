@@ -14,9 +14,15 @@ import TecLogo from '../src/icons/TecLogo';
 import GobLogo from '../src/icons/GobLogo';
 import WelcomeImage from '../src/icons/WelcomeImage';
 
+import { StatusBar } from 'expo-status-bar';
+
 const Start = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.ConInicio}>
+      <StatusBar
+        style='auto'
+        backgroundColor={Theme.colors.white}
+      />
       <View>
         <WelcomeImage />
       </View>
@@ -68,8 +74,6 @@ const styles = StyleSheet.create({
     padding: 20,
 
     backgroundColor: Theme.colors.white,
-
-    marginTop: 40,
   },
 
   ConLoginLogos: {

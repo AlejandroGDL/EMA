@@ -4,7 +4,7 @@
     "slug": "itpaema",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/EmaLogo.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/EmaLogo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "con.Andro.ITPA_EMA"

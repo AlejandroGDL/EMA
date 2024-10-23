@@ -4,11 +4,15 @@ import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 //Components
 import MyText from '../../src/components/MyText';
+import MyButton from '../../src/components/MyButton';
 
 //Axios Config
 import Axiosconfig from '../../src/config/Axiosconfig';
 
 import Toast from 'react-native-toast-message';
+import Theme from '../../src/styles/Theme';
+
+import { StatusBar } from 'expo-status-bar';
 
 const RegisterByQR = () => {
   const [permission, requestPermission] = useCameraPermissions();
@@ -18,21 +22,22 @@ const RegisterByQR = () => {
   const [cameraActive, setCameraActive] = useState(true);
 
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
+  //Solictar permiso de la cámara
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>
+        <MyText color={Theme.colors.white}>
           Se necesita permiso para acceder a la cámara
-        </Text>
-        <Button
-          onPress={requestPermission}
-          title='Permitir acceso a la cámara'
-        />
+        </MyText>
+        <MyButton
+          Function={requestPermission}
+          TextProps={{ color: Theme.colors.white }}
+        >
+          PERMITIR ACCESO A LA CÁMARA
+        </MyButton>
       </View>
     );
   }
@@ -62,14 +67,12 @@ const RegisterByQR = () => {
         EventID: data.EventID,
         StudentID: data.StudentID,
       });
-      console.log(response.data);
       if (response.status === 200) {
         alert('Asistencia registrada');
         Toast.show({
           type: 'success',
           text1: 'Asistencia registrada',
         });
-        console.log(response.data);
         setScanned(true);
         clearTimeout(timer);
       } else {
@@ -92,7 +95,11 @@ const RegisterByQR = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.CamCon}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       {cameraActive ? (
         <CameraView
           style={styles.camera}
@@ -128,13 +135,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-  },
-  message: {
-    textAlign: 'center',
-    paddingBottom: 10,
+    alignItems: 'center',
+    gap: 30,
+
+    backgroundColor: Theme.colors.primary,
   },
   camera: {
     flex: 1,
+  },
+  CamCon: {
+    flex: 1,
+    justifyContent: 'center',
   },
   buttonContainer: {
     flex: 1,

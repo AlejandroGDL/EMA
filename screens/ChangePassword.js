@@ -15,6 +15,8 @@ import Axiosconfig from '../src/config/Axiosconfig';
 
 import { useNavigation } from '@react-navigation/native';
 
+import { StatusBar } from 'expo-status-bar';
+
 const ChangePassword = () => {
   const [ActualStudentPassword, setActualStudentPassword] = useState('');
   const [NewStudentPassword, setNewStudentPassword] = useState('');
@@ -62,6 +64,10 @@ const ChangePassword = () => {
   };
   return (
     <View style={styles.ConChangePassword}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <MyText
         h1
         bold

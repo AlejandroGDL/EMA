@@ -12,6 +12,8 @@ import Theme from '../../src/styles/Theme';
 
 import Toast from 'react-native-toast-message';
 
+import { StatusBar } from 'expo-status-bar';
+
 const ChangePasswordbyAdmin = () => {
   const [StudentID, setStudentID] = useState('');
   const [StudentPassword, setStudentPassword] = useState('');
@@ -50,6 +52,10 @@ const ChangePasswordbyAdmin = () => {
 
   return (
     <View style={styles.ConChangePasswordbyAdmin}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <MyText
         h1
         bold

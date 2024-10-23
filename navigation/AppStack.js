@@ -26,7 +26,6 @@ import EditEvent from '../screens/AdminScreens/EditEvent';
 import FormEdit from '../screens/AdminScreens/FormEditEvent';
 import ChangePasswordbyAdmin from '../screens/AdminScreens/ChangePasswordbyAdmin';
 import RegisterUser from '../screens/AdminScreens/RegisterUser';
-import RegisterUserQR from '../screens/AdminScreens/RegisterUserQR';
 
 import RegisterByQR from '../screens/AdminScreens/RegisterByQR';
 
@@ -243,19 +242,6 @@ const AppStack = () => {
       <Stack.Screen
         name='ChangePasswordbyAdmin'
         component={ChangePasswordbyAdmin}
-        options={{
-          title: '',
-          titleVisible: false,
-          headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: Theme.colors.primary,
-          },
-          headerTintColor: Theme.colors.white,
-        }}
-      />
-      <Stack.Screen
-        name='RegisterUserQR'
-        component={RegisterUserQR}
         options={{
           title: '',
           titleVisible: false,

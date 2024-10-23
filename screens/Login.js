@@ -15,6 +15,8 @@ import GobLogo from '../src/icons/GobLogo';
 import { useAuth } from '../hooks/AuthContext';
 import Toast from 'react-native-toast-message';
 
+import { StatusBar } from 'expo-status-bar';
+
 const Login = ({ navigation }) => {
   const [StudentID, setStudentID] = React.useState('');
   const [StudentPassword, setStudentPassword] = React.useState('');
@@ -27,6 +29,10 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.ConLogin}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.white}
+      />
       <View>
         <MyText
           h1
@@ -97,10 +103,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 20,
-
     justifyContent: 'space-between',
-
-    marginTop: 50,
+    backgroundColor: Theme.colors.white,
   },
   ConLoginInputs: {
     width: '90%',

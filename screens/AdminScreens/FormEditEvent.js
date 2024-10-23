@@ -26,6 +26,8 @@ import Toast from 'react-native-toast-message';
 //API URL
 import API_URL from '../../src/config/Url';
 
+import { StatusBar } from 'expo-status-bar';
+
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 const FormEdit = () => {
@@ -105,6 +107,10 @@ const FormEdit = () => {
 
   return (
     <View style={styles.ConCreateEvent}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <View style={styles.ConCreateEventForm}>
         {/* Event Name Input */}
         <View style={styles.ConCreateEventFormInputsCon}>

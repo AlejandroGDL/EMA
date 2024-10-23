@@ -22,6 +22,8 @@ import Separator from '../src/components/Separator';
 //API URL
 import API_URL from '../src/config/Url';
 
+import { StatusBar } from 'expo-status-bar';
+
 const QR = () => {
   const { user } = useAuth();
 
@@ -35,6 +37,10 @@ const QR = () => {
 
   return (
     <View style={styles.ConQR}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <View>
         <View style={styles.ConEventCard}>
           {event.IsActive ? (

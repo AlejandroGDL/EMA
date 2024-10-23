@@ -23,6 +23,8 @@ import Theme from '../../src/styles/Theme';
 import Axiosconfig from '../../src/config/Axiosconfig';
 import Toast from 'react-native-toast-message';
 
+import { StatusBar } from 'expo-status-bar';
+
 const CreateEvent = () => {
   const [date, setDate] = React.useState(dayjs().toDate());
   const [isVisible, setIsVisible] = React.useState(false);
@@ -84,6 +86,10 @@ const CreateEvent = () => {
 
   return (
     <View style={styles.ConCreateEvent}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <View style={styles.ConCreateEventForm}>
         {/* Event Name Input */}
         <View style={styles.ConCreateEventFormInputsCon}>

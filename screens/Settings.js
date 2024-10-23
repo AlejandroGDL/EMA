@@ -13,12 +13,18 @@ import { useAuth } from '../hooks/AuthContext';
 
 import { useNavigation } from '@react-navigation/native';
 
+import { StatusBar } from 'expo-status-bar';
+
 const Settings = () => {
   const nav = useNavigation();
   const { signOut } = useAuth();
 
   return (
     <View style={styles.SettingsContainer}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <View>
         <MyText
           h1

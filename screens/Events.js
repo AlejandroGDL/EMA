@@ -8,9 +8,15 @@ import Theme from '../src/styles/Theme';
 import MyText from '../src/components/MyText';
 import EventCard from '../src/components/EventCard';
 
+import { StatusBar } from 'expo-status-bar';
+
 export default function Events() {
   return (
     <View style={styles.EventContainer}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <MyText
         h1
         bold

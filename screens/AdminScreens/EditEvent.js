@@ -7,9 +7,15 @@ import AdminEventCard from '../../src/components/AdminEventCard';
 
 import Theme from '../../src/styles/Theme';
 
+import { StatusBar } from 'expo-status-bar';
+
 const EditEvent = () => {
   return (
     <View style={styles.AdminEventCon}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <MyText
         h1
         bold

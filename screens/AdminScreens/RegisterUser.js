@@ -14,6 +14,8 @@ import Theme from '../../src/styles/Theme';
 //Toast
 import Toast from 'react-native-toast-message';
 
+import { StatusBar } from 'expo-status-bar';
+
 const RegisterUser = () => {
   const [StudentID, setStudentID] = useState('');
 
@@ -47,6 +49,10 @@ const RegisterUser = () => {
 
   return (
     <View style={styles.ConRegisterUser}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <MyText
         h1
         bold

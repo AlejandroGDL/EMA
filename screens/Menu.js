@@ -26,6 +26,8 @@ import * as Device from 'expo-device';
 //Axios config
 import Axiosconfig from '../src/config/Axiosconfig';
 
+import { StatusBar } from 'expo-status-bar';
+
 const Menu = ({ navigation }) => {
   const { user } = useAuth();
 
@@ -88,6 +90,10 @@ const Menu = ({ navigation }) => {
 
   return (
     <View style={styles.IndexContainer}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <UserComponent />
       <View style={styles.IndexConInfoCard}>
         <InfoCard
@@ -149,7 +155,7 @@ const Menu = ({ navigation }) => {
 
 async function registerForPushNotificationsAsync() {
   let token;
-  const projectId = '7b240c19-37d8-48fa-8f31-8bc857da091d'; // Expo Project ID
+  const projectId = '5b0a0ecd-7ad9-478c-bb29-f948412c9ad0'; // Expo Project ID
 
   if (Device.isDevice) {
     const { status: existingStatus } =

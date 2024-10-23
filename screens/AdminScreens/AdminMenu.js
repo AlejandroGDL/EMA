@@ -11,9 +11,15 @@ import EditEvent from '../../src/icons/EditEvent';
 
 import Theme from '../../src/styles/Theme';
 
+import { StatusBar } from 'expo-status-bar';
+
 const AdminMenu = ({ navigation }) => {
   return (
     <View style={styles.ConAdminMenu}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <UserComponent />
       <View style={styles.ConAdminMenuButtons}>
         <MyButton

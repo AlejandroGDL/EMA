@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Alert } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import React from 'react';
 
 import Theme from '../styles/Theme';
@@ -16,13 +16,12 @@ import Place from '../icons/Place';
 
 //Configuración de Axios
 import Axiosconfig from '../config/Axiosconfig';
-import API_URL from '../config/Url';
+import config from '../config/Url';
 
 //AuthContext
 import { useAuth } from '../../hooks/AuthContext';
 
 //Expo
-import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 
 //Navegación
@@ -137,7 +136,6 @@ const CertificateCard = () => {
       );
       return;
     }
-
     try {
       const response = await Axiosconfig.post(
         `/api/generatecertificate`,
@@ -152,8 +150,8 @@ const CertificateCard = () => {
 
       if (response.status === 200) {
         nav.navigate('PDFWebView', {
-          EventTitle: event.Title,
-          StudentName: user.StudentName,
+          EventID: event._id,
+          StudentID: user.StudentID,
         });
       }
     } catch (err) {
@@ -177,7 +175,7 @@ const CertificateCard = () => {
       <View>
         <Image
           source={{
-            uri: API_URL + '/uploads/' + event.Image,
+            uri: config.API_URL + '/uploads/' + event.Image,
           }}
           style={styles.EventImage}
         />

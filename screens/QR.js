@@ -20,7 +20,7 @@ import Place from '../src/icons/Place';
 import Separator from '../src/components/Separator';
 
 //API URL
-import API_URL from '../src/config/Url';
+import config from '../src/config/Url';
 
 import { StatusBar } from 'expo-status-bar';
 
@@ -68,7 +68,7 @@ const QR = () => {
           <View>
             <Image
               source={{
-                uri: API_URL + '/uploads/' + event.Image,
+                uri: config.API_URL + '/uploads/' + event.Image,
               }}
               style={styles.EventImage}
             />
@@ -161,7 +161,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   EventImage: {
     width: 90,
     height: 90,
@@ -170,19 +169,16 @@ const styles = StyleSheet.create({
     borderColor: Theme.colors.primary,
     borderWidth: 0.1,
   },
-
   ConEventInfo: {
     flexDirection: 'row',
     gap: 30,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
-
   ConEventInfo1: {
     gap: 10,
     alignItems: 'flex-start',
   },
-
   ConEventInfo2: {
     gap: 10,
     alignItems: 'flex-start',

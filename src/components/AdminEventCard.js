@@ -18,7 +18,7 @@ import Place from '../icons/Place';
 //Configuración de Axios
 import Axiosconfig from '../config/Axiosconfig';
 
-import API_URL from '../config/Url';
+import config from '../config/Url';
 
 const AdminEventCard = () => {
   const nav = useNavigation();
@@ -139,7 +139,7 @@ const AdminEventCard = () => {
       <View>
         <Image
           source={{
-            uri: API_URL + '/uploads/' + event.Image,
+            uri: config.API_URL + '/uploads/' + event.Image,
           }}
           style={styles.EventImage}
         />

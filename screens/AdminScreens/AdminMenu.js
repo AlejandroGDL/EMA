@@ -8,6 +8,9 @@ import MyButton from '../../src/components/MyButton';
 //Icons
 import CreateEvent from '../../src/icons/CreateEvent';
 import EditEvent from '../../src/icons/EditEvent';
+import ResetPassword from '../../src/icons/ResetPassword';
+import RegisterAttendace from '../../src/icons/RegisterAttendance';
+import SeeAttendance from '../../src/icons/SeeAttendance';
 
 import Theme from '../../src/styles/Theme';
 
@@ -43,7 +46,7 @@ const AdminMenu = ({ navigation }) => {
           Editar o Eliminar un Evento
         </MyButton>
         <MyButton
-          Icon={EditEvent}
+          Icon={RegisterAttendace}
           IconProps={{ color: Theme.colors.white, width: 30, height: 30 }}
           TextProps={{ color: Theme.colors.white, bold: true, h3: true }}
           Function={() => {
@@ -53,7 +56,7 @@ const AdminMenu = ({ navigation }) => {
           Registrar Asistencia
         </MyButton>
         <MyButton
-          Icon={EditEvent}
+          Icon={ResetPassword}
           IconProps={{ color: Theme.colors.white, width: 30, height: 30 }}
           TextProps={{ color: Theme.colors.white, bold: true, h3: true }}
           Function={() => {
@@ -61,6 +64,16 @@ const AdminMenu = ({ navigation }) => {
           }}
         >
           Restablecer Contraseña
+        </MyButton>
+        <MyButton
+          Icon={SeeAttendance}
+          IconProps={{ color: Theme.colors.white, width: 30, height: 30 }}
+          TextProps={{ color: Theme.colors.white, bold: true, h3: true }}
+          Function={() => {
+            navigation.navigate('SearchEvents');
+          }}
+        >
+          Ver Asistencias
         </MyButton>
       </View>
     </View>

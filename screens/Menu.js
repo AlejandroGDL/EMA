@@ -28,6 +28,8 @@ import Axiosconfig from '../src/config/Axiosconfig';
 
 import { StatusBar } from 'expo-status-bar';
 
+import config from '../src/config/Url';
+
 const Menu = ({ navigation }) => {
   const { user } = useAuth();
 
@@ -155,7 +157,6 @@ const Menu = ({ navigation }) => {
 
 async function registerForPushNotificationsAsync() {
   let token;
-  const projectId = '5b0a0ecd-7ad9-478c-bb29-f948412c9ad0'; // Expo Project ID
 
   if (Device.isDevice) {
     const { status: existingStatus } =
@@ -169,7 +170,8 @@ async function registerForPushNotificationsAsync() {
       alert('Error al obtener el token!');
       return;
     }
-    token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+    token = (await Notifications.getExpoPushTokenAsync(config.EXPO_PROJECT_ID))
+      .data;
   } else {
     alert('El dispositivo no es válido');
   }
@@ -180,6 +182,7 @@ async function registerForPushNotificationsAsync() {
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#FF231F7C',
+      playSound: true,
     });
   }
 

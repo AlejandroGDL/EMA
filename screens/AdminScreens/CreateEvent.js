@@ -17,6 +17,7 @@ dayjs.extend(timezone);
 
 import * as ImagePicker from 'expo-image-picker';
 
+//Theme
 import Theme from '../../src/styles/Theme';
 
 //Axios
@@ -129,7 +130,7 @@ const CreateEvent = () => {
             bold
             color={Theme.colors.white}
           >
-            Duración Evento:
+            Duración Evento 'horas':
           </MyText>
           <TextInput
             style={styles.CreateInput}

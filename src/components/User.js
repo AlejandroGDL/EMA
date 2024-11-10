@@ -15,7 +15,7 @@ const UserComponent = (props) => {
     <View style={styles.ConUserComponent}>
       <View style={styles.Avatar}>
         <MyText
-          h1
+          h3
           bold
           color={Theme.colors.white}
         >

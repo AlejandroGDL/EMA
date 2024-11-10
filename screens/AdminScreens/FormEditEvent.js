@@ -24,7 +24,7 @@ import Axiosconfig from '../../src/config/Axiosconfig';
 import Toast from 'react-native-toast-message';
 
 //API URL
-import API_URL from '../../src/config/Url';
+import config from '../../src/config/Url';
 
 import { StatusBar } from 'expo-status-bar';
 
@@ -260,7 +260,7 @@ const FormEdit = () => {
                 source={{
                   uri: changeImage
                     ? image
-                    : API_URL + '/uploads/' + event.Image,
+                    : config.API_URL + '/uploads/' + event.Image,
                 }}
                 style={{
                   width: 90,

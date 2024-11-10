@@ -12,9 +12,15 @@ import Theme from '../src/styles/Theme';
 import TecLogo from '../src/icons/TecLogo';
 import GobLogo from '../src/icons/GobLogo';
 
+import { StatusBar } from 'expo-status-bar';
+
 const ForgotPassword = () => {
   return (
     <View style={styles.ConForgot}>
+      <StatusBar
+        style='light'
+        backgroundColor={Theme.colors.primary}
+      />
       <MyText
         h1
         bold

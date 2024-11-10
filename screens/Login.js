@@ -1,4 +1,10 @@
-import { StyleSheet, View, TextInput, Pressable } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  Pressable,
+  SafeAreaView,
+} from 'react-native';
 import React from 'react';
 
 //Componentes personalizados
@@ -28,7 +34,7 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.ConLogin}>
+    <SafeAreaView style={styles.ConLogin}>
       <StatusBar
         style='light'
         backgroundColor={Theme.colors.white}
@@ -38,6 +44,7 @@ const Login = ({ navigation }) => {
           h1
           bold
           color={Theme.colors.primary}
+          extraprops={{ style: { marginTop: 10 } }}
         >
           Iniciar Sesión
         </MyText>
@@ -92,7 +99,7 @@ const Login = ({ navigation }) => {
         <GobLogo />
       </View>
       <Toast />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -101,9 +108,9 @@ export default Login;
 const styles = StyleSheet.create({
   ConLogin: {
     flex: 1,
+    justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    justifyContent: 'space-between',
     backgroundColor: Theme.colors.white,
   },
   ConLoginInputs: {

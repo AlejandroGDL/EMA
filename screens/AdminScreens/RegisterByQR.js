@@ -58,34 +58,36 @@ const RegisterByQR = () => {
   };
 
   // Funcion para escanear el codigo QR
-  function handleBarCodeScanned({ data }) {
+  async function handleBarCodeScanned({ data }) {
     CameraTimeout();
 
     try {
       data = JSON.parse(data);
-      const response = Axiosconfig.post('api/registereventbyqr', {
+      const Response = await Axiosconfig.post('api/registereventbyqr', {
         EventID: data.EventID,
         StudentID: data.StudentID,
       });
-      if (response.status === 200) {
-        alert('Asistencia registrada');
+      if (Response.status === 200) {
         Toast.show({
           type: 'success',
           text1: 'Asistencia registrada',
+          visibilityTime: 1000,
         });
         setScanned(true);
         clearTimeout(timer);
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error al registrar la asistencia',
+          text1: 'Error al registrar asistencia',
         });
       }
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Error al registrar la asistencia',
+        text1: error.response.data.error,
       });
+      setScanned(true);
+      clearTimeout(timer);
     }
   }
 

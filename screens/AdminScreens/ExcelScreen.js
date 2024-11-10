@@ -3,20 +3,19 @@ import { StyleSheet, View, Linking, Button, Platform } from 'react-native';
 import { useEffect } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-import Theme from '../styles/Theme';
+import Theme from '../../src/styles/Theme';
 
 //Componentes
-import MyText from './MyText';
+import MyText from '../../src/components/MyText';
 
-import config from '../config/Url';
+import config from '../../src/config/Url';
 
-const PDFVWebView = () => {
+const ExcelScreen = () => {
   const nav = useNavigation();
   const route = useRoute();
-  const { EventID, StudentID } = route.params;
+  const { EventID } = route.params;
 
-  const pdfUrl =
-    config.API_URL + '/PDF/certificado_' + EventID + '_' + StudentID + '.pdf';
+  const pdfUrl = config.API_URL + '/excel/excel_' + EventID + '.csv';
 
   //Función para abrir el PDF en el navegador
   const openInBrowser = () => {
@@ -56,13 +55,7 @@ const PDFVWebView = () => {
           style={styles.container}
           userAgent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
           source={{
-            uri:
-              config.API_URL +
-              '/PDF/certificado_' +
-              EventID +
-              '_' +
-              StudentID +
-              '.pdf',
+            uri: config.API_URL + '/excel/excel_' + EventID + '.csv',
           }}
         />
       )}
@@ -76,7 +69,7 @@ const PDFVWebView = () => {
   );
 };
 
-export default PDFVWebView;
+export default ExcelScreen;
 
 const styles = StyleSheet.create({
   WebViewCon: {

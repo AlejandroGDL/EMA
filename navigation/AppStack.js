@@ -25,9 +25,10 @@ import CreateEvent from '../screens/AdminScreens/CreateEvent';
 import EditEvent from '../screens/AdminScreens/EditEvent';
 import FormEdit from '../screens/AdminScreens/FormEditEvent';
 import ChangePasswordbyAdmin from '../screens/AdminScreens/ChangePasswordbyAdmin';
-import RegisterUser from '../screens/AdminScreens/RegisterUser';
-
 import RegisterByQR from '../screens/AdminScreens/RegisterByQR';
+import SeeAttendance from '../screens/AdminScreens/SeeAttendance';
+import SearchEvents from '../screens/AdminScreens/SearchEvents';
+import ExcelScreen from '../screens/AdminScreens/ExcelScreen';
 
 //Icons
 import Settings from '../src/icons/Settings';
@@ -133,34 +134,8 @@ const AppStack = () => {
         }}
       />
       <Stack.Screen
-        name='RegisterUser'
-        component={RegisterUser}
-        options={{
-          title: '',
-          titleVisible: false,
-          headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: Theme.colors.primary,
-          },
-          headerTintColor: Theme.colors.white,
-        }}
-      />
-      <Stack.Screen
         name='QR'
         component={QR}
-        options={{
-          title: '',
-          titleVisible: false,
-          headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: Theme.colors.primary,
-          },
-          headerTintColor: Theme.colors.white,
-        }}
-      />
-      <Stack.Screen
-        name='RegisterByQR'
-        component={RegisterByQR}
         options={{
           title: '',
           titleVisible: false,
@@ -242,6 +217,58 @@ const AppStack = () => {
       <Stack.Screen
         name='ChangePasswordbyAdmin'
         component={ChangePasswordbyAdmin}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
+      />
+      <Stack.Screen
+        name='RegisterByQR'
+        component={RegisterByQR}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
+      />
+      <Stack.Screen
+        name='SearchEvents'
+        component={SearchEvents}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
+      />
+      <Stack.Screen
+        name='SeeAttendance'
+        component={SeeAttendance}
+        options={{
+          title: '',
+          titleVisible: false,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Theme.colors.primary,
+          },
+          headerTintColor: Theme.colors.white,
+        }}
+      />
+      <Stack.Screen
+        name='ExcelScreen'
+        component={ExcelScreen}
         options={{
           title: '',
           titleVisible: false,
